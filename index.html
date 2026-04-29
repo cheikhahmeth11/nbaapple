@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MobileShop Pro - Boutique Premium</title>
+
+  <!-- SEO -->
+  <meta name="description" content="Achetez les meilleurs smartphones au Sénégal avec MobileShop Pro. Livraison rapide et paiement sécurisé.">
+
+  <!-- Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <!-- THEME (un seul fichier) -->
+  <link rel="stylesheet" href="styles.css" id="themeStylesheet">
+  <button class="btn-header" onclick="openCartModal()" aria-label="Ouvrir le panier"></button>
+  <button class="btn-header" onclick="toggleTheme()" title="Changer thème">
+  <i class="fas fa-moon"></i>
+</button>
+<button class="btn-header" onclick="openCartModal()" aria-label="Ouvrir le panier"></button>
+</head>
+
+<body>
+  <!-- NAVBAR -->
+  <nav>
+    <div class="nav-container">
+      <div class="logo" onclick="scrollToHome()">
+        <i class="fas fa-mobile-alt"></i>
+        <span>MobileShop Pro</span>
+      </div>
+
+      <div class="nav-links">
+        <a href="#" class="nav-link" onclick="scrollToHome(); return false;">Accueil</a>
+        <a href="#products" class="nav-link">Produits</a>
+        <a href="#about" class="nav-link">À propos</a>
+        <a href="#contact" class="nav-link">Contact</a>
+      </div>
+
+      <div class="nav-actions">
+        <button class="btn-header" onclick="openCartModal()">
+          <i class="fas fa-shopping-cart"></i>
+          <span class="count-badge" id="cartCount">0</span>
+        </button>
+        <button class="btn-header" onclick="openProfileModal()">
+          <i class="fas fa-user"></i>
+          <span id="userDisplay">Connexion</span>
+        </button>
+        <button class="menu-toggle" onclick="toggleMobileMenu()">
+          <i class="fas fa-bars"></i>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- MAIN -->
+  <main class="main-content">
+    <!-- HERO -->
+    <section class="hero" id="home">
+      <h1>Bienvenue chez MobileShop Pro</h1>
+      <p>La meilleure sélection de smartphones premium au Sénégal</p>
+    </section>
+
+    <!-- SEARCH & FILTERS -->
+    <section class="search-section" id="products">
+      <div class="search-bar">
+        <i class="fas fa-search search-icon"></i>
+        <input type="text" class="search-input" id="searchInput" placeholder="Cherchez un téléphone..." onkeyup="filterProducts()">
+      </div>
+
+      <div class="filters-container">
+        <div class="filter-group">
+          <div class="filter-title"><i class="fas fa-building"></i> Marque</div>
+          <div class="filter-options">
+            <div class="filter-option">
+              <input type="checkbox" id="brand-apple" value="apple" onchange="filterProducts()">
+              <label for="brand-apple">Apple</label>
+            </div>
+            <div class="filter-option">
+              <input type="checkbox" id="brand-samsung" value="samsung" onchange="filterProducts()">
+              <label for="brand-samsung">Samsung</label>
+            </div>
+            <div class="filter-option">
+              <input type="checkbox" id="brand-xiaomi" value="xiaomi" onchange="filterProducts()">
+              <label for="brand-xiaomi">Xiaomi</label>
+            </div>
+            <div class="filter-option">
+              <input type="checkbox" id="brand-oppo" value="oppo" onchange="filterProducts()">
+              <label for="brand-oppo">Oppo</label>
+            </div>
+          </div>
+        </div>
+
+        <div class="filter-group">
+          <div class="filter-title"><i class="fas fa-tag"></i> Prix</div>
+          <div class="price-inputs">
+            <input type="number" id="priceMin" placeholder="Min" onchange="filterProducts()">
+            <span style="color: #94a3b8;">-</span>
+            <input type="number" id="priceMax" placeholder="Max" onchange="filterProducts()">
+          </div>
+        </div>
+
+        <div class="filter-group">
+          <div class="filter-title"><i class="fas fa-list"></i> Type</div>
+          <div class="filter-options">
+            <div class="filter-option">
+              <input type="checkbox" id="type-flagship" value="flagship" onchange="filterProducts()">
+              <label for="type-flagship">Flagship</label>
+            </div>
+            <div class="filter-option">
+              <input type="checkbox" id="type-mid" value="mid" onchange="filterProducts()">
+              <label for="type-mid">Mid-Range</label>
+            </div>
+            <div class="filter-option">
+              <input type="checkbox" id="type-budget" value="budget" onchange="filterProducts()">
+              <label for="type-budget">Budget</label>
+            </div>
+          </div>
+        </div>
+
+        <div class="filter-group">
+          <button class="reset-btn" onclick="resetFilters()">
+            <i class="fas fa-redo"></i> Réinitialiser
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- PRODUCTS -->
+    <section class="products-section">
+      <div class="products-header">
+        <div class="results-count">
+          <span id="resultsCount">12</span> produit(s)
+        </div>
+        <select class="sort-select" id="sortSelect" onchange="sortProducts()">
+          <option value="">Trier par</option>
+          <option value="price-asc">Prix: Croissant</option>
+          <option value="price-desc">Prix: Décroissant</option>
+          <option value="name-asc">Nom: A-Z</option>
+          <option value="name-desc">Nom: Z-A</option>
+        </select>
+      </div>
+
+      <div class="products-grid" id="productsGrid"></div>
+    </section>
+
+    <!-- ABOUT SECTION -->
+    <section id="about" style="max-width: 1200px; margin: 4rem auto; padding: 0 2rem;">
+      <h2 style="font-size: 2rem; margin-bottom: 1rem; background: var(--gradient-primary); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">À propos de nous</h2>
+      <p style="color: #cbd5e1; line-height: 1.8; margin-bottom: 1.5rem;">
+        MobileShop Pro est votre destination de confiance pour les smartphones premium au Sénégal. Depuis des années, nous nous engageons à offrir les meilleurs appareils avec un service client exceptionnel.
+      </p>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 2rem;">
+        <div style="background: rgba(102, 126, 234, 0.1); padding: 2rem; border-radius: 15px; text-align: center;">
+          <i class="fas fa-truck" style="font-size: 2.5rem; color: var(--primary); margin-bottom: 1rem;"></i>
+          <h3>Livraison rapide</h3>
+          <p style="color: #94a3b8; margin-top: 0.5rem;">Livraison gratuite à partir de 100,000 FCFA</p>
+        </div>
+        <div style="background: rgba(102, 126, 234, 0.1); padding: 2rem; border-radius: 15px; text-align: center;">
+          <i class="fas fa-shield-alt" style="font-size: 2.5rem; color: var(--primary); margin-bottom: 1rem;"></i>
+          <h3>100% Sécurisé</h3>
+          <p style="color: #94a3b8; margin-top: 0.5rem;">Vos données sont protégées et confidentielles</p>
+        </div>
+        <div style="background: rgba(102, 126, 234, 0.1); padding: 2rem; border-radius: 15px; text-align: center;">
+          <i class="fas fa-headset" style="font-size: 2.5rem; color: var(--primary); margin-bottom: 1rem;"></i>
+          <h3>Support 24/7</h3>
+          <p style="color: #94a3b8; margin-top: 0.5rem;">Notre équipe est là pour vous aider</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- FOOTER -->
+  <footer id="contact">
+    <div class="footer-container">
+      <div class="footer-content">
+        <div class="footer-section">
+          <div class="footer-logo">
+            <i class="fas fa-mobile-alt"></i> MobileShop Pro
+          </div>
+          <p class="footer-desc">La meilleure boutique de smartphones premium au Sénégal avec un service client exceptionnel.</p>
+          <div class="social-links">
+            <a href="#" class="social-link" title="Facebook"><i class="fab fa-facebook-f"></i></a>
+            <a href="#" class="social-link" title="Instagram"><i class="fab fa-instagram"></i></a>
+            <a href="#" class="social-link" title="Twitter"><i class="fab fa-twitter"></i></a>
+            <a href="#" class="social-link" title="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+          </div>
+        </div>
+
+        <div class="footer-section">
+          <h3>Produits</h3>
+          <ul>
+            <li><a href="#products"><i class="fas fa-mobile-alt"></i> Smartphones</a></li>
+            <li><a href="#products"><i class="fas fa-star"></i> Flagships</a></li>
+            <li><a href="#products"><i class="fas fa-fire"></i> Promotions</a></li>
+            <li><a href="#products"><i class="fas fa-list"></i> Tous les produits</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-section">
+          <h3>Support</h3>
+          <ul>
+            <li><a href="#"><i class="fas fa-question-circle"></i> FAQ</a></li>
+            <li><a href="#"><i class="fas fa-file-contract"></i> Conditions</a></li>
+            <li><a href="#"><i class="fas fa-user-secret"></i> Confidentialité</a></li>
+            <li><a href="#"><i class="fas fa-undo"></i> Retours</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-section">
+          <h3>Nous contacter</h3>
+          <div class="footer-contact">
+            <div class="contact-item">
+              <i class="fas fa-phone"></i>
+              <span>+221 77 123 45 67</span>
+            </div>
+            <div class="contact-item">
+              <i class="fas fa-envelope"></i>
+              <span>contact@mobileshop.sn</span>
+            </div>
+            <div class="contact-item">
+              <i class="fas fa-map-marker-alt"></i>
+              <span>Dakar, Sénégal</span>
+            </div>
+            <div class="contact-item">
+              <i class="fab fa-whatsapp"></i>
+              <span>WhatsApp: +221 77 123 45 67</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer-divider"></div>
+
+      <div class="footer-bottom">
+        <p class="copyright">&copy; 2026 MobileShop Pro. Tous droits réservés.</p>
+        <div class="footer-links">
+          <a href="#" class="footer-link">À propos</a>
+          <a href="#" class="footer-link">Contact</a>
+          <a href="#" class="footer-link">Conditions</a>
+          <a href="#" class="footer-link">Confidentialité</a>
+        </div>
+      </div>
+    </div>
+    <section class="reviews-section">
+  <h2 class="section-title">Avis de nos clients</h2>
+
+  <div class="reviews-container">
+
+    <div class="review-card">
+      <div class="review-stars">★★★★★</div>
+      <p class="review-text">
+        Excellent service ! Livraison rapide à Dakar et téléphone en parfait état.
+      </p>
+      <div class="review-user">— Mamadou D.</div>
+    </div>
+
+    <div class="review-card">
+      <div class="review-stars">★★★★★</div>
+      <p class="review-text">
+        Très satisfait de mon iPhone. Prix correct et équipe professionnelle.
+      </p>
+      <div class="review-user">— Awa S.</div>
+    </div>
+
+    <div class="review-card">
+      <div class="review-stars">★★★★☆</div>
+      <p class="review-text">
+        Bon service client. Je recommande MobileShop Pro.
+      </p>
+      <div class="review-user">— Cheikh T.</div>
+    </div>
+
+  </div>
+</section>
+  </footer>
+
+  <!-- OVERLAY -->
+  <div class="overlay" id="overlay" onclick="closeAllModals()"></div>
+
+  <!-- CART MODAL -->
+  <div class="modal" id="cartModal">
+    <div class="modal-header">
+      <h3 class="modal-title">Mon Panier</h3>
+      <button class="close-btn" onclick="closeCartModal()"><i class="fas fa-times"></i></button>
+    </div>
+
+    <div class="modal-content">
+      <div id="cartEmptyMsg" style="text-align: center; color: #94a3b8;">
+        <i class="fas fa-shopping-cart" style="font-size: 3rem; opacity: 0.5; display: block; margin-bottom: 1rem;"></i>
+        Panier vide
+      </div>
+      <div id="cartItemsList"></div>
+    </div>
+
+    <div class="modal-footer">
+      <div class="cart-summary">
+        <div class="summary-row">
+          <span>Sous-total:</span>
+          <span id="subtotal">0 FCFA</span>
+        </div>
+        <div class="summary-row">
+          <span>Frais de livraison:</span>
+          <span id="shipping">0 FCFA</span>
+        </div>
+        <div class="summary-row summary-total">
+          <span>Total:</span>
+          <span id="totalPrice">0 FCFA</span>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Nom complet</label>
+        <input type="text" class="form-input" id="customerName" placeholder="Votre nom">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Téléphone</label>
+        <input type="tel" class="form-input" id="customerPhone" placeholder="77 123 45 67">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Adresse</label>
+        <input type="text" class="form-input" id="customerAddress" placeholder="Votre adresse">
+      </div>
+
+      <button class="btn btn-secondary" onclick="placeOrder()">
+        <i class="fab fa-whatsapp"></i> Commander via WhatsApp
+      </button>
+    </div>
+  </div>
+
+  <!-- PROFILE MODAL -->
+  <div class="modal" id="profileModal">
+    <div class="modal-header">
+      <h3 class="modal-title">Mon Profil</h3>
+      <button class="close-btn" onclick="closeProfileModal()"><i class="fas fa-times"></i></button>
+    </div>
+
+    <div class="modal-content">
+      <!-- AUTH CONTENT -->
+      <div id="authContent">
+        <div class="error-msg" id="authError"></div>
+
+        <!-- LOGIN FORM -->
+        <form id="loginForm" onsubmit="handleLogin(event)">
+          <h3 style="margin-bottom: 1.5rem;">Connexion</h3>
+          <div class="form-group">
+            <label class="form-label">Email</label>
+            <input type="email" class="form-input" id="loginEmail" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Mot de passe</label>
+            <input type="password" class="form-input" id="loginPassword" required>
+          </div>
+          <button type="submit" class="btn btn-primary">Connexion</button>
+          <div style="text-align: center; margin-top: 1rem; color: #cbd5e1;">
+            Pas encore de compte ? <a href="#" onclick="switchToRegister(event)" style="color: var(--primary); font-weight: 600; cursor: pointer;">S'inscrire</a>
+          </div>
+        </form>
+
+        <!-- REGISTER FORM -->
+        <form id="registerForm" style="display: none;" onsubmit="handleRegister(event)">
+          <h3 style="margin-bottom: 1.5rem;">Créer un compte</h3>
+          <div class="form-group">
+            <label class="form-label">Nom complet</label>
+            <input type="text" class="form-input" id="registerName" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Email</label>
+            <input type="email" class="form-input" id="registerEmail" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Téléphone</label>
+            <input type="tel" class="form-input" id="registerPhone" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Mot de passe</label>
+            <input type="password" class="form-input" id="registerPassword" required>
+          </div>
+          <button type="submit" class="btn btn-primary">Créer un compte</button>
+          <div style="text-align: center; margin-top: 1rem; color: #cbd5e1;">
+            Vous avez un compte ? <a href="#" onclick="switchToLogin(event)" style="color: var(--primary); font-weight: 600; cursor: pointer;">Connexion</a>
+          </div>
+        </form>
+      </div>
+
+      <!-- PROFILE CONTENT -->
+      <div id="profileContent" style="display: none;">
+        <div class="tabs">
+          <button class="tab-btn active" onclick="switchTab(event, 'dashboard')">Dashboard</button>
+          <button class="tab-btn" onclick="switchTab(event, 'orders')">Commandes</button>
+          <button class="tab-btn" onclick="switchTab(event, 'settings')">Paramètres</button>
+        </div>
+
+        <div id="dashboard" class="tab-content active">
+          <div class="profile-info-box">
+            <div class="profile-name" id="profileName">--</div>
+            <div class="profile-email" id="profileEmail">--</div>
+          </div>
+          <div class="stats">
+            <div class="stat-box">
+              <div class="stat-value" id="totalOrders">0</div>
+              <div class="stat-label">Commandes</div>
+            </div>
+            <div class="stat-box">
+              <div class="stat-value" id="totalAmount">0 FCFA</div>
+              <div class="stat-label">Total dépensé</div>
+            </div>
+          </div>
+        </div>
+
+        <div id="orders" class="tab-content">
+          <h3 style="margin-bottom: 1rem;">Historique des commandes</h3>
+          <div id="ordersList">
+            <p style="color: #94a3b8; text-align: center;">Aucune commande</p>
+          </div>
+        </div>
+
+        <div id="settings" class="tab-content">
+          <h3 style="margin-bottom: 1.5rem;">Paramètres du compte</h3>
+          <div class="form-group">
+            <label class="form-label">Nom complet</label>
+            <input type="text" class="form-input" id="settingsName">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Email</label>
+            <input type="email" class="form-input" id="settingsEmail">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Téléphone</label>
+            <input type="tel" class="form-input" id="settingsPhone">
+          </div>
+          <button class="btn btn-primary" onclick="updateProfile()">Mettre à jour</button>
+          <button class="btn btn-secondary" onclick="logout()">Déconnexion</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
