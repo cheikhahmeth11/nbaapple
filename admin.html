@@ -1,1108 +1,1900 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MobileShop Pro - Admin Dashboard</title>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-<style>
-  :root {
-    --primary: #667eea;
-    --secondary: #f5576c;
-    --success: #10b981;
-    --danger: #ef4444;
-    --warning: #f59e0b;
-    --dark: #0f172a;
-    --light: #f8fafc;
-    --gray: #64748b;
-    --shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-  }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MobileShop Pro — Admin</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet">
 
-  * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-  }
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
-  body {
-    font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
-    background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
-    color: #fff;
-    min-height: 100vh;
-  }
+    :root {
+      --bg:       #080c14;
+      --surface:  #0d1526;
+      --surface2: #111d35;
+      --border:   #1a2d50;
+      --accent:   #00d4ff;
+      --accent2:  #7c3aed;
+      --green:    #00e5a0;
+      --red:      #ff4757;
+      --orange:   #ff8c00;
+      --yellow:   #ffd700;
+      --text:     #e8f0fe;
+      --muted:    #5a7a9a;
+      --mono:     'JetBrains Mono', monospace;
+      --sans:     'Sora', sans-serif;
+    }
 
-  /* ===== SIDEBAR ===== */
-  .sidebar {
-    position: fixed;
-    left: 0;
-    top: 0;
-    width: 250px;
-    height: 100vh;
-    background: rgba(15, 23, 42, 0.95);
-    backdrop-filter: blur(20px);
-    padding: 2rem 1rem;
-    border-right: 1px solid rgba(102, 126, 234, 0.2);
-    overflow-y: auto;
-    z-index: 1000;
-  }
+    body {
+      font-family: var(--sans);
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
 
-  .logo {
-    font-size: 1.3rem;
-    font-weight: 800;
-    color: var(--primary);
-    margin-bottom: 2rem;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-  }
+    /* ── LOGIN ── */
+    #loginScreen {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: radial-gradient(ellipse at 30% 40%, rgba(0,212,255,0.08) 0%, transparent 60%),
+                  radial-gradient(ellipse at 70% 70%, rgba(124,58,237,0.08) 0%, transparent 60%),
+                  var(--bg);
+    }
 
-  .menu {
-    list-style: none;
-  }
+    .login-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 3rem;
+      width: 100%;
+      max-width: 420px;
+      box-shadow: 0 0 60px rgba(0,212,255,0.05);
+    }
 
-  .menu-item {
-    margin-bottom: 0.5rem;
-  }
+    .login-logo {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 2rem;
+    }
 
-  .menu-link {
-    color: #cbd5e1;
-    text-decoration: none;
-    padding: 0.75rem 1rem;
-    border-radius: 8px;
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    transition: all 0.3s ease;
-    cursor: pointer;
-  }
+    .login-logo-icon {
+      width: 44px;
+      height: 44px;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      color: white;
+    }
 
-  .menu-link:hover,
-  .menu-link.active {
-    background: rgba(102, 126, 234, 0.2);
-    color: white;
-  }
+    .login-logo-text { font-size: 1.2rem; font-weight: 700; color: var(--text); }
+    .login-logo-sub { font-size: 0.75rem; color: var(--muted); font-family: var(--mono); }
 
-  .menu-link i {
-    width: 20px;
-  }
+    .login-title { font-size: 1.6rem; font-weight: 800; margin-bottom: 0.5rem; }
+    .login-subtitle { color: var(--muted); font-size: 0.9rem; margin-bottom: 2rem; font-family: var(--mono); }
 
-  /* ===== MAIN CONTENT ===== */
-  .main {
-    margin-left: 250px;
-    padding: 2rem;
-  }
+    .field { margin-bottom: 1.25rem; }
+    .field label { display: block; font-size: 0.8rem; color: var(--muted); margin-bottom: 0.5rem; font-family: var(--mono); letter-spacing: 1px; text-transform: uppercase; }
 
-  .header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 2rem;
-    background: rgba(102, 126, 234, 0.1);
-    padding: 1.5rem;
-    border-radius: 15px;
-    border: 1px solid rgba(102, 126, 234, 0.2);
-  }
+    .field input {
+      width: 100%;
+      padding: 0.875rem 1rem;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      color: var(--text);
+      font-family: var(--mono);
+      font-size: 0.95rem;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
 
-  .header h1 {
-    font-size: 1.8rem;
-  }
+    .field input:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(0,212,255,0.1);
+    }
 
-  .logout-btn {
-    background: var(--danger);
-    color: white;
-    border: none;
-    padding: 0.7rem 1.5rem;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-  }
+    .login-btn {
+      width: 100%;
+      padding: 0.875rem;
+      background: linear-gradient(135deg, var(--accent), #0099cc);
+      color: #000;
+      font-weight: 700;
+      font-family: var(--sans);
+      font-size: 0.95rem;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.2s;
+      margin-top: 0.5rem;
+      letter-spacing: 0.5px;
+    }
 
-  .logout-btn:hover {
-    transform: translateY(-2px);
-  }
+    .login-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,212,255,0.3); }
 
-  /* ===== DASHBOARD GRID ===== */
-  .dashboard-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 1.5rem;
-    margin-bottom: 2rem;
-  }
+    .login-error {
+      background: rgba(255,71,87,0.1);
+      border: 1px solid rgba(255,71,87,0.3);
+      color: #ff6b7a;
+      padding: 0.75rem 1rem;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-family: var(--mono);
+      margin-bottom: 1rem;
+      display: none;
+    }
 
-  .card {
-    background: rgba(102, 126, 234, 0.1);
-    border: 1px solid rgba(102, 126, 234, 0.2);
-    border-radius: 15px;
-    padding: 1.5rem;
-    transition: all 0.3s ease;
-  }
+    .login-error.show { display: block; }
 
-  .card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
-  }
+    .login-hint {
+      margin-top: 1.5rem;
+      padding: 1rem;
+      background: rgba(0,212,255,0.05);
+      border: 1px solid rgba(0,212,255,0.15);
+      border-radius: 8px;
+      font-family: var(--mono);
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
 
-  .card-icon {
-    font-size: 2rem;
-    margin-bottom: 1rem;
-  }
+    .login-hint strong { color: var(--accent); }
 
-  .card-value {
-    font-size: 2rem;
-    font-weight: 800;
-    margin-bottom: 0.5rem;
-  }
+    /* ── LAYOUT ── */
+    #adminApp { display: none; min-height: 100vh; }
 
-  .card-label {
-    color: #94a3b8;
-    font-size: 0.9rem;
-  }
-
-  /* ===== SECTION ===== */
-  .section {
-    display: none;
-  }
-
-  .section.active {
-    display: block;
-  }
-
-  .section-title {
-    font-size: 1.5rem;
-    margin-bottom: 1.5rem;
-  }
-
-  /* ===== TABLES ===== */
-  .table-container {
-    background: rgba(102, 126, 234, 0.1);
-    border: 1px solid rgba(102, 126, 234, 0.2);
-    border-radius: 15px;
-    overflow: hidden;
-  }
-
-  table {
-    width: 100%;
-    border-collapse: collapse;
-  }
-
-  th {
-    background: rgba(102, 126, 234, 0.2);
-    padding: 1rem;
-    text-align: left;
-    font-weight: 600;
-    color: white;
-  }
-
-  td {
-    padding: 1rem;
-    border-bottom: 1px solid rgba(102, 126, 234, 0.1);
-    color: #cbd5e1;
-  }
-
-  tr:hover {
-    background: rgba(102, 126, 234, 0.1);
-  }
-
-  .status {
-    padding: 0.25rem 0.75rem;
-    border-radius: 50px;
-    font-size: 0.8rem;
-    font-weight: 600;
-  }
-
-  .status-pending {
-    background: rgba(245, 158, 11, 0.2);
-    color: #f59e0b;
-  }
-
-  .status-completed {
-    background: rgba(16, 185, 129, 0.2);
-    color: #10b981;
-  }
-
-  .btn {
-    padding: 0.5rem 1rem;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    font-weight: 600;
-    transition: all 0.3s ease;
-    margin-right: 0.5rem;
-  }
-
-  .btn-primary {
-    background: var(--primary);
-    color: white;
-  }
-
-  .btn-primary:hover {
-    transform: translateY(-2px);
-  }
-
-  .btn-danger {
-    background: var(--danger);
-    color: white;
-  }
-
-  .btn-danger:hover {
-    transform: translateY(-2px);
-  }
-
-  .btn-success {
-    background: var(--success);
-    color: white;
-  }
-
-  .btn-success:hover {
-    transform: translateY(-2px);
-  }
-
-  /* ===== FORMS ===== */
-  .form-group {
-    margin-bottom: 1.5rem;
-  }
-
-  .form-label {
-    display: block;
-    margin-bottom: 0.5rem;
-    font-weight: 600;
-    color: #cbd5e1;
-  }
-
-  .form-input,
-  .form-select,
-  .form-textarea {
-    width: 100%;
-    padding: 0.8rem 1rem;
-    background: rgba(102, 126, 234, 0.1);
-    border: 1px solid rgba(102, 126, 234, 0.3);
-    border-radius: 8px;
-    color: white;
-    font-family: inherit;
-    transition: all 0.3s ease;
-  }
-
-  .form-input:focus,
-  .form-select:focus,
-  .form-textarea:focus {
-    outline: none;
-    border-color: var(--primary);
-    background: rgba(102, 126, 234, 0.15);
-  }
-
-  .form-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1rem;
-  }
-
-  /* ===== MODAL ===== */
-  .modal {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.7);
-    z-index: 2000;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .modal.active {
-    display: flex;
-  }
-
-  .modal-content {
-    background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
-    border-radius: 15px;
-    padding: 2rem;
-    max-width: 600px;
-    width: 90%;
-    max-height: 90vh;
-    overflow-y: auto;
-    border: 1px solid rgba(102, 126, 234, 0.2);
-  }
-
-  .modal-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 1.5rem;
-  }
-
-  .close-modal {
-    background: none;
-    border: none;
-    font-size: 1.5rem;
-    cursor: pointer;
-    color: #94a3b8;
-  }
-
-  /* ===== ALERTS ===== */
-  .alert {
-    padding: 1rem;
-    border-radius: 8px;
-    margin-bottom: 1.5rem;
-    display: none;
-  }
-
-  .alert.show {
-    display: block;
-  }
-
-  .alert-success {
-    background: rgba(16, 185, 129, 0.1);
-    border: 1px solid rgba(16, 185, 129, 0.3);
-    color: #86efac;
-  }
-
-  .alert-danger {
-    background: rgba(239, 68, 68, 0.1);
-    border: 1px solid rgba(239, 68, 68, 0.3);
-    color: #fca5a5;
-  }
-
-  /* ===== SEARCH ===== */
-  .search-box {
-    margin-bottom: 1.5rem;
-  }
-
-  .search-input {
-    width: 100%;
-    max-width: 400px;
-    padding: 0.8rem 1rem;
-    background: rgba(102, 126, 234, 0.1);
-    border: 1px solid rgba(102, 126, 234, 0.3);
-    border-radius: 8px;
-    color: white;
-  }
-
-  .search-input::placeholder {
-    color: #64748b;
-  }
-
-  /* ===== RESPONSIVE ===== */
-  @media (max-width: 768px) {
     .sidebar {
-      width: 0;
+      position: fixed;
+      top: 0; left: 0;
+      width: 260px;
+      height: 100vh;
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      z-index: 100;
+      transition: transform 0.3s;
+    }
+
+    .sidebar-header {
+      padding: 1.5rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .brand-icon {
+      width: 38px;
+      height: 38px;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      border-radius: 9px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+      color: white;
+      flex-shrink: 0;
+    }
+
+    .brand-name { font-weight: 700; font-size: 1rem; }
+    .brand-sub { font-size: 0.7rem; color: var(--accent); font-family: var(--mono); letter-spacing: 2px; text-transform: uppercase; }
+
+    .sidebar-nav { flex: 1; padding: 1rem 0; overflow-y: auto; }
+
+    .nav-section-title {
+      padding: 0.5rem 1.5rem;
+      font-size: 0.65rem;
+      font-family: var(--mono);
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-top: 0.5rem;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.75rem 1.5rem;
+      color: var(--muted);
+      cursor: pointer;
+      transition: all 0.2s;
+      border-left: 3px solid transparent;
+      font-size: 0.9rem;
+      font-weight: 500;
+      text-decoration: none;
+    }
+
+    .nav-item:hover { color: var(--text); background: rgba(255,255,255,0.03); }
+
+    .nav-item.active {
+      color: var(--accent);
+      background: rgba(0,212,255,0.06);
+      border-left-color: var(--accent);
+    }
+
+    .nav-item i { width: 18px; text-align: center; font-size: 0.9rem; }
+
+    .nav-badge {
+      margin-left: auto;
+      background: var(--red);
+      color: white;
+      font-size: 0.65rem;
+      font-family: var(--mono);
+      font-weight: 700;
+      padding: 0.15rem 0.45rem;
+      border-radius: 999px;
+    }
+
+    .sidebar-footer {
+      padding: 1rem 1.5rem;
+      border-top: 1px solid var(--border);
+    }
+
+    .admin-user {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 1rem;
+    }
+
+    .admin-avatar {
+      width: 36px;
+      height: 36px;
+      background: linear-gradient(135deg, var(--accent2), var(--accent));
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.9rem;
+      color: white;
+      font-weight: 700;
+    }
+
+    .admin-info { flex: 1; }
+    .admin-name { font-size: 0.85rem; font-weight: 600; }
+    .admin-role { font-size: 0.7rem; color: var(--accent); font-family: var(--mono); }
+
+    .logout-btn {
+      width: 100%;
+      padding: 0.6rem;
+      background: rgba(255,71,87,0.1);
+      border: 1px solid rgba(255,71,87,0.3);
+      color: var(--red);
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.8rem;
+      font-family: var(--sans);
+      font-weight: 600;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+
+    .logout-btn:hover { background: rgba(255,71,87,0.2); }
+
+    /* ── MAIN ── */
+    .main {
+      margin-left: 260px;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .topbar {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 1rem 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+    }
+
+    .topbar-left h1 {
+      font-size: 1.25rem;
+      font-weight: 700;
+    }
+
+    .topbar-left p { font-size: 0.8rem; color: var(--muted); font-family: var(--mono); }
+
+    .topbar-right { display: flex; align-items: center; gap: 1rem; }
+
+    .topbar-time {
+      font-family: var(--mono);
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+
+    .store-link {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 1rem;
+      background: rgba(0,212,255,0.1);
+      border: 1px solid rgba(0,212,255,0.3);
+      border-radius: 8px;
+      color: var(--accent);
+      text-decoration: none;
+      font-size: 0.8rem;
+      font-weight: 600;
+      transition: all 0.2s;
+    }
+
+    .store-link:hover { background: rgba(0,212,255,0.2); }
+
+    .content { flex: 1; padding: 2rem; }
+
+    /* ── SECTIONS ── */
+    .section { display: none; }
+    .section.active { display: block; }
+
+    /* ── STATS CARDS ── */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1.25rem;
+      margin-bottom: 2rem;
+    }
+
+    .stat-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 1.5rem;
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.2s, border-color 0.2s;
+    }
+
+    .stat-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+    }
+
+    .stat-card.blue::before  { background: linear-gradient(90deg, var(--accent), transparent); }
+    .stat-card.green::before { background: linear-gradient(90deg, var(--green), transparent); }
+    .stat-card.purple::before{ background: linear-gradient(90deg, var(--accent2), transparent); }
+    .stat-card.orange::before{ background: linear-gradient(90deg, var(--orange), transparent); }
+
+    .stat-card:hover { transform: translateY(-3px); border-color: var(--muted); }
+
+    .stat-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 1rem;
+    }
+
+    .stat-label { font-size: 0.75rem; color: var(--muted); font-family: var(--mono); letter-spacing: 1px; text-transform: uppercase; }
+
+    .stat-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 9px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+    }
+
+    .stat-icon.blue   { background: rgba(0,212,255,0.15);  color: var(--accent); }
+    .stat-icon.green  { background: rgba(0,229,160,0.15);  color: var(--green); }
+    .stat-icon.purple { background: rgba(124,58,237,0.15); color: var(--accent2); }
+    .stat-icon.orange { background: rgba(255,140,0,0.15);  color: var(--orange); }
+
+    .stat-value { font-size: 2rem; font-weight: 800; font-family: var(--mono); }
+    .stat-sub { font-size: 0.75rem; color: var(--muted); margin-top: 0.25rem; font-family: var(--mono); }
+
+    .stat-trend {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25rem;
+      font-size: 0.75rem;
+      font-family: var(--mono);
+      margin-top: 0.5rem;
+    }
+
+    .stat-trend.up   { color: var(--green); }
+    .stat-trend.down { color: var(--red); }
+
+    /* ── TABLE ── */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      overflow: hidden;
+      margin-bottom: 1.5rem;
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.25rem 1.5rem;
+      border-bottom: 1px solid var(--border);
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .card-title { font-size: 1rem; font-weight: 700; }
+    .card-subtitle { font-size: 0.75rem; color: var(--muted); font-family: var(--mono); }
+
+    .card-actions { display: flex; gap: 0.75rem; flex-wrap: wrap; }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      border: none;
+      font-family: var(--sans);
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--accent), #0099cc);
+      color: #000;
+    }
+
+    .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0,212,255,0.3); }
+
+    .btn-ghost {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid var(--border);
+      color: var(--muted);
+    }
+
+    .btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
+
+    .btn-danger {
+      background: rgba(255,71,87,0.15);
+      border: 1px solid rgba(255,71,87,0.3);
+      color: var(--red);
+    }
+
+    .btn-danger:hover { background: rgba(255,71,87,0.25); }
+
+    .btn-success {
+      background: rgba(0,229,160,0.15);
+      border: 1px solid rgba(0,229,160,0.3);
+      color: var(--green);
+    }
+
+    .btn-success:hover { background: rgba(0,229,160,0.25); }
+
+    .search-field {
+      position: relative;
+    }
+
+    .search-field i {
+      position: absolute;
+      left: 0.75rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--muted);
+      font-size: 0.8rem;
+    }
+
+    .search-field input {
+      padding: 0.5rem 0.75rem 0.5rem 2rem;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+      font-size: 0.8rem;
+      font-family: var(--mono);
+      width: 220px;
+      transition: border-color 0.2s;
+    }
+
+    .search-field input:focus { outline: none; border-color: var(--accent); }
+
+    table { width: 100%; border-collapse: collapse; }
+
+    thead tr { background: rgba(255,255,255,0.02); }
+
+    th {
+      padding: 0.75rem 1.5rem;
+      text-align: left;
+      font-size: 0.7rem;
+      font-family: var(--mono);
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--muted);
+      border-bottom: 1px solid var(--border);
+      white-space: nowrap;
+    }
+
+    td {
+      padding: 1rem 1.5rem;
+      border-bottom: 1px solid rgba(26,45,80,0.5);
+      font-size: 0.875rem;
+      vertical-align: middle;
+    }
+
+    tr:last-child td { border-bottom: none; }
+
+    tr:hover td { background: rgba(255,255,255,0.02); }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      padding: 0.25rem 0.6rem;
+      border-radius: 999px;
+      font-size: 0.7rem;
+      font-weight: 700;
+      font-family: var(--mono);
+    }
+
+    .badge-flagship { background: rgba(0,212,255,0.15); color: var(--accent); border: 1px solid rgba(0,212,255,0.3); }
+    .badge-mid      { background: rgba(124,58,237,0.15); color: #a78bfa; border: 1px solid rgba(124,58,237,0.3); }
+    .badge-budget   { background: rgba(255,140,0,0.15); color: var(--orange); border: 1px solid rgba(255,140,0,0.3); }
+
+    .brand-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-weight: 600;
+      font-size: 0.85rem;
+    }
+
+    .brand-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+    }
+
+    .dot-apple   { background: #aaa; }
+    .dot-samsung { background: #1428a0; }
+    .dot-xiaomi  { background: #ff6900; }
+    .dot-oppo    { background: #1d8de1; }
+
+    .price-cell { font-family: var(--mono); font-weight: 600; color: var(--accent); }
+
+    .actions-cell { display: flex; gap: 0.5rem; }
+
+    .icon-btn {
+      width: 32px;
+      height: 32px;
+      border-radius: 7px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--muted);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.8rem;
+      transition: all 0.2s;
+    }
+
+    .icon-btn:hover { border-color: var(--accent); color: var(--accent); }
+    .icon-btn.del:hover { border-color: var(--red); color: var(--red); }
+
+    /* ── MODAL ── */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.7);
+      z-index: 200;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-overlay.open { display: flex; }
+
+    .modal-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      width: 90%;
+      max-width: 540px;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: 0 24px 80px rgba(0,0,0,0.6);
+      animation: modalIn 0.25s ease;
+    }
+
+    @keyframes modalIn {
+      from { transform: scale(0.95) translateY(10px); opacity: 0; }
+      to   { transform: scale(1) translateY(0); opacity: 1; }
+    }
+
+    .modal-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.25rem 1.5rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .modal-head h3 { font-size: 1rem; font-weight: 700; }
+
+    .modal-close {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.9rem;
+      transition: all 0.2s;
+    }
+
+    .modal-close:hover { color: var(--text); border-color: var(--text); }
+
+    .modal-body { padding: 1.5rem; }
+
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+
+    .form-group { margin-bottom: 1.25rem; }
+
+    .form-group label {
+      display: block;
+      font-size: 0.7rem;
+      font-family: var(--mono);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 0.5rem;
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      width: 100%;
+      padding: 0.75rem;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+      font-size: 0.875rem;
+      font-family: var(--sans);
+      transition: border-color 0.2s;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+      outline: none;
+      border-color: var(--accent);
+    }
+
+    .form-group select option { background: var(--surface2); }
+
+    .modal-foot {
+      display: flex;
+      gap: 0.75rem;
+      justify-content: flex-end;
+      padding: 1rem 1.5rem;
+      border-top: 1px solid var(--border);
+    }
+
+    /* ── CHARTS ── */
+    .charts-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .bar-chart { padding: 1.5rem; }
+
+    .bar-item { margin-bottom: 1rem; }
+
+    .bar-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.8rem;
+      margin-bottom: 0.4rem;
+      font-family: var(--mono);
+    }
+
+    .bar-label span:first-child { color: var(--text); }
+    .bar-label span:last-child  { color: var(--accent); font-weight: 600; }
+
+    .bar-track {
+      height: 6px;
+      background: rgba(255,255,255,0.05);
+      border-radius: 999px;
       overflow: hidden;
     }
 
-    .main {
-      margin-left: 0;
+    .bar-fill {
+      height: 100%;
+      border-radius: 999px;
+      transition: width 1s ease;
     }
 
-    .dashboard-grid {
-      grid-template-columns: 1fr;
+    /* ── ORDERS SECTION ── */
+    .order-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      padding: 0.25rem 0.7rem;
+      border-radius: 999px;
+      font-size: 0.7rem;
+      font-weight: 700;
+      font-family: var(--mono);
     }
 
-    .form-row {
-      grid-template-columns: 1fr;
+    .status-new      { background: rgba(0,212,255,0.1);  color: var(--accent); border: 1px solid rgba(0,212,255,0.3); }
+    .status-done     { background: rgba(0,229,160,0.1);  color: var(--green);  border: 1px solid rgba(0,229,160,0.3); }
+    .status-pending  { background: rgba(255,140,0,0.1);  color: var(--orange); border: 1px solid rgba(255,140,0,0.3); }
+    .status-canceled { background: rgba(255,71,87,0.1);  color: var(--red);    border: 1px solid rgba(255,71,87,0.3); }
+
+    /* ── USERS ── */
+    .user-cell { display: flex; align-items: center; gap: 0.75rem; }
+
+    .user-avatar-sm {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent2), var(--accent));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: white;
+      flex-shrink: 0;
     }
 
-    .modal-content {
-      width: 95%;
+    .user-name-cell { font-weight: 600; font-size: 0.875rem; }
+    .user-email-cell { font-size: 0.75rem; color: var(--muted); font-family: var(--mono); }
+
+    /* ── SETTINGS ── */
+    .settings-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+
+    .settings-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 1.5rem;
     }
 
-    .header {
-      flex-direction: column;
-      gap: 1rem;
-      align-items: flex-start;
+    .settings-card h3 { font-size: 0.95rem; font-weight: 700; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.5rem; }
+    .settings-card h3 i { color: var(--accent); }
+
+    /* ── EMPTY ── */
+    .empty-table {
+      text-align: center;
+      padding: 3rem;
+      color: var(--muted);
     }
-  }
-</style>
+
+    .empty-table i { font-size: 2.5rem; margin-bottom: 1rem; display: block; opacity: 0.4; }
+    .empty-table p { font-family: var(--mono); font-size: 0.85rem; }
+
+    /* ── TOAST ── */
+    .toast {
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1rem 1.25rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-size: 0.875rem;
+      font-weight: 600;
+      z-index: 999;
+      transform: translateY(80px);
+      opacity: 0;
+      transition: all 0.3s ease;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+      max-width: 320px;
+    }
+
+    .toast.show { transform: translateY(0); opacity: 1; }
+    .toast-icon { font-size: 1.1rem; }
+
+    /* ── MOBILE ── */
+    .menu-toggle-admin {
+      display: none;
+      position: fixed;
+      bottom: 1.5rem;
+      left: 1.5rem;
+      width: 48px;
+      height: 48px;
+      background: var(--accent);
+      color: #000;
+      border: none;
+      border-radius: 50%;
+      font-size: 1.1rem;
+      cursor: pointer;
+      z-index: 200;
+      align-items: center;
+      justify-content: center;
+    }
+
+    @media (max-width: 900px) {
+      .sidebar { transform: translateX(-100%); }
+      .sidebar.open { transform: translateX(0); }
+      .main { margin-left: 0; }
+      .menu-toggle-admin { display: flex; }
+      .charts-row { grid-template-columns: 1fr; }
+      .settings-grid { grid-template-columns: 1fr; }
+      .form-row { grid-template-columns: 1fr; }
+      th, td { padding: 0.75rem 1rem; }
+      .content { padding: 1.25rem; }
+    }
+
+    @media (max-width: 600px) {
+      .stats-grid { grid-template-columns: 1fr 1fr; }
+      .topbar { padding: 1rem; }
+    }
+  </style>
 </head>
-
 <body>
+
+<!-- ── LOGIN ────────────────────────────────────────────── -->
+<div id="loginScreen">
+  <div class="login-box">
+    <div class="login-logo">
+      <div class="login-logo-icon"><i class="fas fa-mobile-alt"></i></div>
+      <div>
+        <div class="login-logo-text">MobileShop Pro</div>
+        <div class="login-logo-sub">Administration</div>
+      </div>
+    </div>
+    <h2 class="login-title">Connexion Admin</h2>
+    <p class="login-subtitle">// Accès restreint — personnel autorisé uniquement</p>
+    <div class="login-error" id="loginError">Identifiants incorrects.</div>
+    <div class="field">
+      <label>Identifiant</label>
+      <input type="text" id="adminUser" placeholder="admin" value="admin">
+    </div>
+    <div class="field">
+      <label>Mot de passe</label>
+      <input type="password" id="adminPass" placeholder="••••••••" value="admin123" onkeydown="if(event.key==='Enter')doLogin()">
+    </div>
+    <button class="login-btn" onclick="doLogin()">
+      <i class="fas fa-sign-in-alt"></i>&nbsp; Accéder au tableau de bord
+    </button>
+    <div class="login-hint">
+      <strong>Démo :</strong> admin / admin123
+    </div>
+  </div>
+</div>
+
+<!-- ── APP ──────────────────────────────────────────────── -->
+<div id="adminApp">
+
   <!-- SIDEBAR -->
-  <aside class="sidebar">
-    <div class="logo">
-      <i class="fas fa-mobile-alt"></i>
-      <span>Admin</span>
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <div class="brand">
+        <div class="brand-icon"><i class="fas fa-mobile-alt"></i></div>
+        <div>
+          <div class="brand-name">MobileShop Pro</div>
+          <div class="brand-sub">Admin Panel</div>
+        </div>
+      </div>
     </div>
 
-    <ul class="menu">
-      <li class="menu-item">
-        <div class="menu-link active" onclick="showSection('dashboard')">
-          <i class="fas fa-chart-line"></i>
-          <span>Tableau de bord</span>
-        </div>
-      </li>
-      <li class="menu-item">
-        <div class="menu-link" onclick="showSection('products')">
-          <i class="fas fa-box"></i>
-          <span>Produits</span>
-        </div>
-      </li>
-      <li class="menu-item">
-        <div class="menu-link" onclick="showSection('orders')">
-          <i class="fas fa-shopping-cart"></i>
-          <span>Commandes</span>
-        </div>
-      </li>
-      <li class="menu-item">
-        <div class="menu-link" onclick="showSection('users')">
-          <i class="fas fa-users"></i>
-          <span>Utilisateurs</span>
-        </div>
-      </li>
-      <li class="menu-item">
-        <div class="menu-link" onclick="showSection('analytics')">
-          <i class="fas fa-chart-bar"></i>
-          <span>Statistiques</span>
-        </div>
-      </li>
-      <li class="menu-item">
-        <div class="menu-link" onclick="showSection('settings')">
-          <i class="fas fa-cog"></i>
-          <span>Paramètres</span>
-        </div>
-      </li>
-    </ul>
-  </aside>
+    <nav class="sidebar-nav">
+      <div class="nav-section-title">Principal</div>
+      <a class="nav-item active" onclick="showSection('dashboard')">
+        <i class="fas fa-chart-line"></i> Dashboard
+      </a>
+      <a class="nav-item" onclick="showSection('orders')">
+        <i class="fas fa-shopping-bag"></i> Commandes
+        <span class="nav-badge" id="ordBadge">0</span>
+      </a>
+      <a class="nav-item" onclick="showSection('products')">
+        <i class="fas fa-mobile-alt"></i> Produits
+      </a>
+      <a class="nav-item" onclick="showSection('users')">
+        <i class="fas fa-users"></i> Clients
+      </a>
 
-  <!-- MAIN CONTENT -->
-  <main class="main">
-    <!-- HEADER -->
-    <div class="header">
-      <h1>Admin Dashboard</h1>
-      <button class="logout-btn" onclick="logout()">
+      <div class="nav-section-title">Système</div>
+      <a class="nav-item" onclick="showSection('analytics')">
+        <i class="fas fa-chart-bar"></i> Analytiques
+      </a>
+      <a class="nav-item" onclick="showSection('settings')">
+        <i class="fas fa-cog"></i> Paramètres
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="admin-user">
+        <div class="admin-avatar">A</div>
+        <div class="admin-info">
+          <div class="admin-name">Administrateur</div>
+          <div class="admin-role">Super Admin</div>
+        </div>
+      </div>
+      <button class="logout-btn" onclick="doLogout()">
         <i class="fas fa-sign-out-alt"></i> Déconnexion
       </button>
     </div>
+  </aside>
 
-    <!-- ALERTS -->
-    <div class="alert alert-success" id="successAlert"></div>
-    <div class="alert alert-danger" id="errorAlert"></div>
+  <!-- MAIN CONTENT -->
+  <div class="main">
+    <header class="topbar">
+      <div class="topbar-left">
+        <h1 id="pageTitle">Dashboard</h1>
+        <p id="pageSubtitle">Vue d'ensemble de votre activité</p>
+      </div>
+      <div class="topbar-right">
+        <span class="topbar-time" id="clock">--:--:--</span>
+        <a href="mobileshop-pro.html" class="store-link" target="_blank">
+          <i class="fas fa-external-link-alt"></i> Voir la boutique
+        </a>
+      </div>
+    </header>
 
-    <!-- ===== DASHBOARD SECTION ===== -->
-    <section id="dashboard" class="section active">
-      <h2 class="section-title">Tableau de bord</h2>
-      
-      <div class="dashboard-grid">
-        <div class="card">
-          <div class="card-icon" style="color: var(--primary);"><i class="fas fa-box"></i></div>
-          <div class="card-value" id="totalProducts">0</div>
-          <div class="card-label">Produits</div>
+    <div class="content">
+
+      <!-- ── DASHBOARD ── -->
+      <div class="section active" id="sec-dashboard">
+        <div class="stats-grid" id="kpiGrid"></div>
+
+        <div class="charts-row">
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <div class="card-title">Ventes par marque</div>
+                <div class="card-subtitle">// revenus cumulés</div>
+              </div>
+            </div>
+            <div class="bar-chart" id="brandChart"></div>
+          </div>
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <div class="card-title">Répartition par type</div>
+                <div class="card-subtitle">// nombre de commandes</div>
+              </div>
+            </div>
+            <div class="bar-chart" id="typeChart"></div>
+          </div>
         </div>
 
         <div class="card">
-          <div class="card-icon" style="color: var(--secondary);"><i class="fas fa-shopping-cart"></i></div>
-          <div class="card-value" id="totalOrders">0</div>
-          <div class="card-label">Commandes</div>
-        </div>
-
-        <div class="card">
-          <div class="card-icon" style="color: var(--success);"><i class="fas fa-users"></i></div>
-          <div class="card-value" id="totalUsers">0</div>
-          <div class="card-label">Utilisateurs</div>
-        </div>
-
-        <div class="card">
-          <div class="card-icon" style="color: var(--warning);"><i class="fas fa-money-bill"></i></div>
-          <div class="card-value" id="totalRevenue">0 FCFA</div>
-          <div class="card-label">Revenu total</div>
+          <div class="card-header">
+            <div>
+              <div class="card-title">Dernières commandes</div>
+              <div class="card-subtitle">// 5 plus récentes</div>
+            </div>
+            <button class="btn btn-ghost" onclick="showSection('orders')">
+              <i class="fas fa-arrow-right"></i> Tout voir
+            </button>
+          </div>
+          <table>
+            <thead>
+              <tr>
+                <th>#</th><th>Client</th><th>Articles</th><th>Montant</th><th>Statut</th>
+              </tr>
+            </thead>
+            <tbody id="recentOrders"></tbody>
+          </table>
         </div>
       </div>
 
-      <h3 style="margin-top: 2rem; margin-bottom: 1rem;">Commandes récentes</h3>
-      <div class="table-container">
-        <table>
-          <thead>
-            <tr>
-              <th>ID Commande</th>
-              <th>Client</th>
-              <th>Montant</th>
-              <th>Statut</th>
-              <th>Date</th>
-            </tr>
-          </thead>
-          <tbody id="recentOrdersTable">
-          </tbody>
-        </table>
+      <!-- ── ORDERS ── -->
+      <div class="section" id="sec-orders">
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">Toutes les commandes</div>
+              <div class="card-subtitle" id="ordersCountLabel">// 0 commande(s)</div>
+            </div>
+            <div class="card-actions">
+              <div class="search-field">
+                <i class="fas fa-search"></i>
+                <input type="text" id="orderSearch" placeholder="Rechercher..." oninput="renderOrders()">
+              </div>
+              <button class="btn btn-ghost" onclick="exportCSV()">
+                <i class="fas fa-download"></i> Export CSV
+              </button>
+            </div>
+          </div>
+          <div style="overflow-x:auto">
+            <table>
+              <thead>
+                <tr>
+                  <th>#</th><th>Date</th><th>Client</th><th>Téléphone</th><th>Adresse</th><th>Articles</th><th>Total</th><th>Statut</th><th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="ordersTableBody"></tbody>
+            </table>
+          </div>
+        </div>
       </div>
-    </section>
 
-    <!-- ===== PRODUCTS SECTION ===== -->
-    <section id="products" class="section">
-      <h2 class="section-title">Gestion des produits</h2>
+      <!-- ── PRODUCTS ── -->
+      <div class="section" id="sec-products">
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">Catalogue produits</div>
+              <div class="card-subtitle" id="prodCountLabel">// 0 produit(s)</div>
+            </div>
+            <div class="card-actions">
+              <div class="search-field">
+                <i class="fas fa-search"></i>
+                <input type="text" id="productSearch" placeholder="Rechercher..." oninput="renderProductsTable()">
+              </div>
+              <button class="btn btn-primary" onclick="openProductModal()">
+                <i class="fas fa-plus"></i> Nouveau produit
+              </button>
+            </div>
+          </div>
+          <div style="overflow-x:auto">
+            <table>
+              <thead>
+                <tr>
+                  <th>ID</th><th>Marque</th><th>Nom</th><th>Specs</th><th>Type</th><th>Prix</th><th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="productsTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
 
-      <button class="btn btn-primary" onclick="openProductModal()" style="margin-bottom: 1.5rem;">
-        <i class="fas fa-plus"></i> Ajouter un produit
+      <!-- ── USERS ── -->
+      <div class="section" id="sec-users">
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">Clients inscrits</div>
+              <div class="card-subtitle" id="usersCountLabel">// 0 client(s)</div>
+            </div>
+            <div class="card-actions">
+              <div class="search-field">
+                <i class="fas fa-search"></i>
+                <input type="text" id="userSearch" placeholder="Rechercher..." oninput="renderUsersTable()">
+              </div>
+            </div>
+          </div>
+          <div style="overflow-x:auto">
+            <table>
+              <thead>
+                <tr><th>#</th><th>Client</th><th>Téléphone</th><th>Commandes</th><th>Total dépensé</th><th>Actions</th></tr>
+              </thead>
+              <tbody id="usersTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── ANALYTICS ── -->
+      <div class="section" id="sec-analytics">
+        <div class="stats-grid" id="analyticsKpi"></div>
+        <div class="charts-row">
+          <div class="card">
+            <div class="card-header"><div class="card-title">Top 5 produits commandés</div></div>
+            <div class="bar-chart" id="topProductsChart"></div>
+          </div>
+          <div class="card">
+            <div class="card-header"><div class="card-title">Revenus par gamme de prix</div></div>
+            <div class="bar-chart" id="priceRangeChart"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── SETTINGS ── -->
+      <div class="section" id="sec-settings">
+        <div class="settings-grid">
+          <div class="settings-card">
+            <h3><i class="fas fa-user-shield"></i> Accès Admin</h3>
+            <div class="form-group">
+              <label>Identifiant admin</label>
+              <input type="text" id="setUser" value="admin">
+            </div>
+            <div class="form-group">
+              <label>Nouveau mot de passe</label>
+              <input type="password" id="setPass" placeholder="Laisser vide pour garder">
+            </div>
+            <button class="btn btn-primary" onclick="saveAdminCreds()">
+              <i class="fas fa-save"></i> Sauvegarder
+            </button>
+          </div>
+
+          <div class="settings-card">
+            <h3><i class="fas fa-store"></i> Informations boutique</h3>
+            <div class="form-group">
+              <label>Nom de la boutique</label>
+              <input type="text" id="setShopName" value="MobileShop Pro">
+            </div>
+            <div class="form-group">
+              <label>WhatsApp de commande</label>
+              <input type="text" id="setWhatsapp" value="+221771234567">
+            </div>
+            <div class="form-group">
+              <label>Seuil livraison gratuite (FCFA)</label>
+              <input type="number" id="setFreeShipping" value="100000">
+            </div>
+            <button class="btn btn-primary" onclick="saveShopSettings()">
+              <i class="fas fa-save"></i> Sauvegarder
+            </button>
+          </div>
+
+          <div class="settings-card">
+            <h3><i class="fas fa-database"></i> Données</h3>
+            <p style="color:var(--muted);font-size:0.85rem;margin-bottom:1rem;">
+              Gérer les données enregistrées dans le navigateur.
+            </p>
+            <div style="display:flex;flex-direction:column;gap:0.75rem">
+              <button class="btn btn-ghost" onclick="exportAllData()">
+                <i class="fas fa-file-export"></i> Exporter toutes les données
+              </button>
+              <button class="btn btn-danger" onclick="clearOrders()">
+                <i class="fas fa-trash"></i> Vider les commandes
+              </button>
+              <button class="btn btn-danger" onclick="clearAll()">
+                <i class="fas fa-exclamation-triangle"></i> Réinitialisation complète
+              </button>
+            </div>
+          </div>
+
+          <div class="settings-card">
+            <h3><i class="fas fa-info-circle"></i> À propos</h3>
+            <p style="color:var(--muted);font-size:0.8rem;line-height:1.8;font-family:var(--mono)">
+              Version: 1.0.0<br>
+              Boutique: MobileShop Pro<br>
+              Localisation: Dakar, Sénégal<br>
+              WhatsApp: +221 77 123 45 67<br><br>
+              Données stockées localement (localStorage).<br>
+              Pas de serveur requis.
+            </p>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /content -->
+  </div><!-- /main -->
+</div><!-- /adminApp -->
+
+<!-- PRODUCT MODAL -->
+<div class="modal-overlay" id="productModal">
+  <div class="modal-box">
+    <div class="modal-head">
+      <h3 id="productModalTitle">Nouveau produit</h3>
+      <button class="modal-close" onclick="closeProductModal()"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="editProductId">
+      <div class="form-row">
+        <div class="form-group">
+          <label>Marque</label>
+          <select id="pBrand">
+            <option value="Apple">Apple</option>
+            <option value="Samsung">Samsung</option>
+            <option value="Xiaomi">Xiaomi</option>
+            <option value="Oppo">Oppo</option>
+            <option value="Autre">Autre</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Type</label>
+          <select id="pType">
+            <option value="flagship">Flagship</option>
+            <option value="mid">Mid-Range</option>
+            <option value="budget">Budget</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Nom du produit</label>
+        <input type="text" id="pName" placeholder="Ex: iPhone 15 Pro Max">
+      </div>
+      <div class="form-group">
+        <label>Caractéristiques (specs)</label>
+        <input type="text" id="pSpecs" placeholder="Ex: 256 Go · Noir · 48 Mpx">
+      </div>
+      <div class="form-group">
+        <label>Prix (FCFA)</label>
+        <input type="number" id="pPrice" placeholder="Ex: 650000" min="0">
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" onclick="closeProductModal()">Annuler</button>
+      <button class="btn btn-primary" onclick="saveProduct()">
+        <i class="fas fa-save"></i> Enregistrer
       </button>
-
-      <div class="search-box">
-        <input type="text" class="search-input" id="productSearch" placeholder="Chercher un produit..." onkeyup="filterProducts()">
-      </div>
-
-      <div class="table-container">
-        <table>
-          <thead>
-            <tr>
-              <th>Nom</th>
-              <th>Marque</th>
-              <th>Prix</th>
-              <th>Type</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody id="productsTable">
-          </tbody>
-        </table>
-      </div>
-    </section>
-
-    <!-- ===== ORDERS SECTION ===== -->
-    <section id="orders" class="section">
-      <h2 class="section-title">Gestion des commandes</h2>
-
-      <div class="search-box">
-        <input type="text" class="search-input" id="orderSearch" placeholder="Chercher une commande..." onkeyup="filterOrders()">
-      </div>
-
-      <div class="table-container">
-        <table>
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>Client</th>
-              <th>Téléphone</th>
-              <th>Montant</th>
-              <th>Statut</th>
-              <th>Date</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody id="ordersTable">
-          </tbody>
-        </table>
-      </div>
-    </section>
-
-    <!-- ===== USERS SECTION ===== -->
-    <section id="users" class="section">
-      <h2 class="section-title">Gestion des utilisateurs</h2>
-
-      <div class="search-box">
-        <input type="text" class="search-input" id="userSearch" placeholder="Chercher un utilisateur..." onkeyup="filterUsers()">
-      </div>
-
-      <div class="table-container">
-        <table>
-          <thead>
-            <tr>
-              <th>Nom</th>
-              <th>Email</th>
-              <th>Téléphone</th>
-              <th>Commandes</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody id="usersTable">
-          </tbody>
-        </table>
-      </div>
-    </section>
-
-    <!-- ===== ANALYTICS SECTION ===== -->
-    <section id="analytics" class="section">
-      <h2 class="section-title">Statistiques</h2>
-
-      <div class="dashboard-grid">
-        <div class="card">
-          <div class="card-icon" style="color: var(--primary);"><i class="fas fa-chart-pie"></i></div>
-          <div class="card-value" id="avgOrderValue">0 FCFA</div>
-          <div class="card-label">Commande moyenne</div>
-        </div>
-
-        <div class="card">
-          <div class="card-icon" style="color: var(--secondary);"><i class="fas fa-percentage"></i></div>
-          <div class="card-value" id="completionRate">0%</div>
-          <div class="card-label">Taux de complétion</div>
-        </div>
-
-        <div class="card">
-          <div class="card-icon" style="color: var(--success);"><i class="fas fa-arrow-up"></i></div>
-          <div class="card-value" id="topProduct">--</div>
-          <div class="card-label">Produit le plus vendu</div>
-        </div>
-
-        <div class="card">
-          <div class="card-icon" style="color: var(--warning);"><i class="fas fa-star"></i></div>
-          <div class="card-value" id="avgRating">0/5</div>
-          <div class="card-label">Note moyenne</div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ===== SETTINGS SECTION ===== -->
-    <section id="settings" class="section">
-      <h2 class="section-title">Paramètres</h2>
-
-      <div class="card" style="max-width: 600px;">
-        <div class="form-group">
-          <label class="form-label">Nom du magasin</label>
-          <input type="text" class="form-input" id="storeName" value="MobileShop Pro">
-        </div>
-
-        <div class="form-group">
-          <label class="form-label">Email contact</label>
-          <input type="email" class="form-input" id="storeEmail" value="contact@mobileshop.sn">
-        </div>
-
-        <div class="form-group">
-          <label class="form-label">Téléphone</label>
-          <input type="tel" class="form-input" id="storePhone" value="77 123 45 67">
-        </div>
-
-        <div class="form-group">
-          <label class="form-label">Adresse</label>
-          <input type="text" class="form-input" id="storeAddress" value="Dakar, Sénégal">
-        </div>
-
-        <div class="form-group">
-          <label class="form-label">Frais de livraison (si < 100k)</label>
-          <input type="number" class="form-input" id="shippingFee" value="2000">
-        </div>
-
-        <button class="btn btn-success" onclick="saveSettings()">
-          <i class="fas fa-save"></i> Sauvegarder
-        </button>
-      </div>
-    </section>
-  </main>
-
-  <!-- PRODUCT MODAL -->
-  <div class="modal" id="productModal">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h3>Ajouter/Modifier un produit</h3>
-        <button class="close-modal" onclick="closeProductModal()"><i class="fas fa-times"></i></button>
-      </div>
-
-      <form onsubmit="saveProduct(event)">
-        <div class="form-group">
-          <label class="form-label">Nom du produit</label>
-          <input type="text" class="form-input" id="productName" required>
-        </div>
-
-        <div class="form-row">
-          <div class="form-group">
-            <label class="form-label">Marque</label>
-            <select class="form-select" id="productBrand" required>
-              <option value="">-- Sélectionnez --</option>
-              <option value="apple">Apple</option>
-              <option value="samsung">Samsung</option>
-              <option value="xiaomi">Xiaomi</option>
-              <option value="oppo">Oppo</option>
-            </select>
-          </div>
-
-          <div class="form-group">
-            <label class="form-label">Type</label>
-            <select class="form-select" id="productType" required>
-              <option value="">-- Sélectionnez --</option>
-              <option value="flagship">Flagship</option>
-              <option value="mid">Mid-Range</option>
-              <option value="budget">Budget</option>
-            </select>
-          </div>
-        </div>
-
-        <div class="form-row">
-          <div class="form-group">
-            <label class="form-label">Prix (FCFA)</label>
-            <input type="number" class="form-input" id="productPrice" required>
-          </div>
-
-          <div class="form-group">
-            <label class="form-label">Taille écran</label>
-            <input type="text" class="form-input" id="productScreen" placeholder="ex: 6.7\"">
-          </div>
-        </div>
-
-        <div class="form-group">
-          <label class="form-label">Spécifications</label>
-          <textarea class="form-textarea" id="productSpecs" rows="3" placeholder="Ex: A16 Bionic • Super Retina XDR"></textarea>
-        </div>
-
-        <div class="form-group">
-          <label class="form-label">URL Image</label>
-          <input type="url" class="form-input" id="productImage" placeholder="https://...">
-        </div>
-
-        <button type="submit" class="btn btn-success">
-          <i class="fas fa-save"></i> Sauvegarder
-        </button>
-      </form>
     </div>
   </div>
+</div>
 
-  <script>
-    // ===== DATABASE =====
-    let db = {
-      products: JSON.parse(localStorage.getItem('adminProducts')) || [
-        { id: 1, name: "iPhone 14 Pro Max", brand: "apple", price: 900000, type: "flagship", screen: "6.7\"", specs: "A16 Bionic • 6.7\" Super Retina XDR", image: "https://images.unsplash.com/photo-1664478546389-6c03f5c0b9e0" },
-        { id: 2, name: "Samsung Galaxy S23 Ultra", brand: "samsung", price: 850000, type: "flagship", screen: "6.8\"", specs: "Snapdragon 8 Gen 2 • 6.8\" Dynamic AMOLED", image: "https://images.unsplash.com/photo-1678911820864-e0c2d1a5cddb" },
-        { id: 3, name: "Xiaomi Redmi Note 12 Pro+", brand: "xiaomi", price: 450000, type: "mid", screen: "6.67\"", specs: "Snapdragon 685 • 6.67\" AMOLED 120Hz", image: "https://images.unsplash.com/photo-1631729371254-42c2892f0e6e" },
-      ],
-      orders: JSON.parse(localStorage.getItem('adminOrders')) || [],
-      users: JSON.parse(localStorage.getItem('adminUsers')) || [],
-      settings: JSON.parse(localStorage.getItem('adminSettings')) || {
-        storeName: "MobileShop Pro",
-        storeEmail: "contact@mobileshop.sn",
-        storePhone: "77 123 45 67",
-        storeAddress: "Dakar, Sénégal",
-        shippingFee: 2000
-      }
-    };
+<!-- ORDER DETAIL MODAL -->
+<div class="modal-overlay" id="orderDetailModal">
+  <div class="modal-box">
+    <div class="modal-head">
+      <h3>Détail commande</h3>
+      <button class="modal-close" onclick="closeOrderModal()"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="modal-body" id="orderDetailBody"></div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" onclick="closeOrderModal()">Fermer</button>
+    </div>
+  </div>
+</div>
 
-    let currentEditingProductId = null;
+<!-- TOAST -->
+<div class="toast" id="adminToast">
+  <span class="toast-icon" id="toastIcon">✓</span>
+  <span id="adminToastMsg">OK</span>
+</div>
 
-    // ===== INIT =====
-    function init() {
-      loadOrders();
-      loadUsers();
-      updateDashboard();
-      displayProducts();
-      displayOrders();
-      displayUsers();
-      loadSettings();
+<!-- MOBILE SIDEBAR TOGGLE -->
+<button class="menu-toggle-admin" id="sidebarToggle" onclick="document.getElementById('sidebar').classList.toggle('open')">
+  <i class="fas fa-bars"></i>
+</button>
+
+<script>
+// ─── CONSTANTS ──────────────────────────────────────────────────────────────
+const ADMIN_CREDS = { user: 'admin', pass: 'admin123' };
+
+const DEFAULT_PRODUCTS = [
+  { id: 1,  brand: 'Apple',   name: 'iPhone 15 Pro Max', specs: '256 Go · Titanium · 48 Mpx',       price: 850000, type: 'flagship', icon: '📱' },
+  { id: 2,  brand: 'Apple',   name: 'iPhone 15',          specs: '128 Go · Rose · 48 Mpx',          price: 580000, type: 'flagship', icon: '📱' },
+  { id: 3,  brand: 'Apple',   name: 'iPhone 14',          specs: '128 Go · Minuit · 12 Mpx',        price: 460000, type: 'flagship', icon: '📱' },
+  { id: 4,  brand: 'Samsung', name: 'Galaxy S24 Ultra',   specs: '256 Go · Titanium · 200 Mpx',     price: 900000, type: 'flagship', icon: '📱' },
+  { id: 5,  brand: 'Samsung', name: 'Galaxy S24',         specs: '128 Go · Violet · 50 Mpx',       price: 550000, type: 'flagship', icon: '📱' },
+  { id: 6,  brand: 'Samsung', name: 'Galaxy A55',         specs: '128 Go · Bleu · 50 Mpx',         price: 250000, type: 'mid',      icon: '📱' },
+  { id: 7,  brand: 'Samsung', name: 'Galaxy A35',         specs: '128 Go · Bleu · 50 Mpx',         price: 180000, type: 'mid',      icon: '📱' },
+  { id: 8,  brand: 'Xiaomi',  name: 'Redmi Note 13 Pro',  specs: '256 Go · Noir · 200 Mpx',        price: 200000, type: 'mid',      icon: '📱' },
+  { id: 9,  brand: 'Xiaomi',  name: 'Xiaomi 14',          specs: '512 Go · Noir · Leica 50 Mpx',   price: 700000, type: 'flagship', icon: '📱' },
+  { id: 10, brand: 'Xiaomi',  name: 'Redmi 13C',          specs: '128 Go · Bleu Glacier · 50 Mpx', price: 90000,  type: 'budget',   icon: '📱' },
+  { id: 11, brand: 'Oppo',    name: 'Reno 11 Pro',        specs: '256 Go · Bleu · 50 Mpx',         price: 320000, type: 'mid',      icon: '📱' },
+  { id: 12, brand: 'Oppo',    name: 'Find X7 Ultra',      specs: '512 Go · Noir · Hasselblad',     price: 950000, type: 'flagship', icon: '📱' },
+];
+
+const COLORS = ['#00d4ff','#7c3aed','#00e5a0','#ff8c00','#ff4757','#ffd700','#ff6b9d'];
+const BRAND_COLORS = { Apple: '#94a3b8', Samsung: '#1428a0', Xiaomi: '#ff6900', Oppo: '#1d8de1', Autre: '#888' };
+
+// ─── STATE ──────────────────────────────────────────────────────────────────
+let adminLoggedIn = false;
+let products = [];
+let orders   = [];
+let users    = [];
+let orderStatuses = {};
+
+// ─── HELPERS ────────────────────────────────────────────────────────────────
+function loadData() {
+  orders   = JSON.parse(localStorage.getItem('msp_orders'))  || [];
+  users    = JSON.parse(localStorage.getItem('msp_users'))   || [];
+  products = JSON.parse(localStorage.getItem('msp_products')) || DEFAULT_PRODUCTS;
+  orderStatuses = JSON.parse(localStorage.getItem('msp_order_statuses')) || {};
+}
+
+function saveProducts() {
+  localStorage.setItem('msp_products', JSON.stringify(products));
+}
+
+function saveStatuses() {
+  localStorage.setItem('msp_order_statuses', JSON.stringify(orderStatuses));
+}
+
+function fmt(n) { return Number(n).toLocaleString('fr-FR') + ' FCFA'; }
+
+function getOrderStatus(id) {
+  return orderStatuses[id] || 'new';
+}
+
+function statusBadge(status) {
+  const map = {
+    new:      ['status-new',      '<i class="fas fa-circle-dot"></i> Nouveau'],
+    pending:  ['status-pending',  '<i class="fas fa-clock"></i> En attente'],
+    done:     ['status-done',     '<i class="fas fa-check-circle"></i> Livré'],
+    canceled: ['status-canceled', '<i class="fas fa-times-circle"></i> Annulé'],
+  };
+  const [cls, label] = map[status] || map['new'];
+  return `<span class="order-status ${cls}">${label}</span>`;
+}
+
+function toast(msg, ok = true) {
+  const t  = document.getElementById('adminToast');
+  const ic = document.getElementById('toastIcon');
+  document.getElementById('adminToastMsg').textContent = msg;
+  t.style.background = ok ? 'var(--surface2)' : 'rgba(255,71,87,0.2)';
+  t.style.borderColor = ok ? 'var(--green)' : 'var(--red)';
+  ic.textContent = ok ? '✓' : '✕';
+  ic.style.color = ok ? 'var(--green)' : 'var(--red)';
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+// ─── CLOCK ──────────────────────────────────────────────────────────────────
+function updateClock() {
+  document.getElementById('clock').textContent = new Date().toLocaleTimeString('fr-FR');
+}
+setInterval(updateClock, 1000);
+updateClock();
+
+// ─── AUTH ───────────────────────────────────────────────────────────────────
+function doLogin() {
+  const u = document.getElementById('adminUser').value;
+  const p = document.getElementById('adminPass').value;
+  const creds = JSON.parse(localStorage.getItem('msp_admin_creds')) || ADMIN_CREDS;
+
+  if (u === creds.user && p === creds.pass) {
+    adminLoggedIn = true;
+    document.getElementById('loginScreen').style.display = 'none';
+    document.getElementById('adminApp').style.display = 'block';
+    loadData();
+    initDashboard();
+    updateBadges();
+  } else {
+    const el = document.getElementById('loginError');
+    el.classList.add('show');
+    setTimeout(() => el.classList.remove('show'), 3000);
+  }
+}
+
+function doLogout() {
+  adminLoggedIn = false;
+  document.getElementById('adminApp').style.display = 'none';
+  document.getElementById('loginScreen').style.display = 'flex';
+}
+
+// ─── NAVIGATION ─────────────────────────────────────────────────────────────
+const PAGE_INFO = {
+  dashboard:  { title: 'Dashboard',       subtitle: '// Vue d\'ensemble de votre activité' },
+  orders:     { title: 'Commandes',        subtitle: '// Gérer les commandes reçues' },
+  products:   { title: 'Produits',         subtitle: '// Gérer le catalogue' },
+  users:      { title: 'Clients',          subtitle: '// Base de données clients' },
+  analytics:  { title: 'Analytiques',      subtitle: '// Statistiques approfondies' },
+  settings:   { title: 'Paramètres',       subtitle: '// Configuration de la boutique' },
+};
+
+function showSection(id) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('sec-' + id).classList.add('active');
+
+  const info = PAGE_INFO[id];
+  document.getElementById('pageTitle').textContent    = info.title;
+  document.getElementById('pageSubtitle').textContent = info.subtitle;
+
+  const navItems = document.querySelectorAll('.nav-item');
+  navItems.forEach(n => {
+    if (n.getAttribute('onclick') && n.getAttribute('onclick').includes(`'${id}'`)) {
+      n.classList.add('active');
     }
+  });
 
-    function saveDB() {
-      localStorage.setItem('adminProducts', JSON.stringify(db.products));
-      localStorage.setItem('adminOrders', JSON.stringify(db.orders));
-      localStorage.setItem('adminUsers', JSON.stringify(db.users));
-      localStorage.setItem('adminSettings', JSON.stringify(db.settings));
-    }
+  loadData();
 
-    // ===== DASHBOARD =====
-    function updateDashboard() {
-      document.getElementById('totalProducts').textContent = db.products.length;
-      document.getElementById('totalOrders').textContent = db.orders.length;
-      document.getElementById('totalUsers').textContent = db.users.length;
+  if (id === 'dashboard')  initDashboard();
+  if (id === 'orders')     renderOrders();
+  if (id === 'products')   renderProductsTable();
+  if (id === 'users')      renderUsersTable();
+  if (id === 'analytics')  renderAnalytics();
 
-      const totalRevenue = db.orders.reduce((sum, o) => sum + o.total, 0);
-      document.getElementById('totalRevenue').textContent = totalRevenue.toLocaleString() + ' FCFA';
+  document.getElementById('sidebar').classList.remove('open');
+}
 
-      displayRecentOrders();
-      updateAnalytics();
-    }
+function updateBadges() {
+  const newOrders = orders.filter(o => getOrderStatus(o.id) === 'new').length;
+  document.getElementById('ordBadge').textContent = newOrders;
+  document.getElementById('ordBadge').style.display = newOrders > 0 ? 'inline-flex' : 'none';
+}
 
-    function displayRecentOrders() {
-      const tbody = document.getElementById('recentOrdersTable');
-      const recentOrders = db.orders.slice(-5).reverse();
+// ─── DASHBOARD ──────────────────────────────────────────────────────────────
+function initDashboard() {
+  loadData();
 
-      tbody.innerHTML = recentOrders.map(order => `
+  const totalRev = orders.reduce((s, o) => s + o.total, 0);
+  const avgOrder = orders.length ? Math.round(totalRev / orders.length) : 0;
+
+  document.getElementById('kpiGrid').innerHTML = `
+    <div class="stat-card blue">
+      <div class="stat-card-header">
+        <div class="stat-label">Revenus totaux</div>
+        <div class="stat-icon blue"><i class="fas fa-coins"></i></div>
+      </div>
+      <div class="stat-value">${(totalRev/1000).toFixed(0)}k</div>
+      <div class="stat-sub">FCFA cumulés</div>
+    </div>
+    <div class="stat-card green">
+      <div class="stat-card-header">
+        <div class="stat-label">Commandes</div>
+        <div class="stat-icon green"><i class="fas fa-shopping-bag"></i></div>
+      </div>
+      <div class="stat-value">${orders.length}</div>
+      <div class="stat-sub">au total</div>
+    </div>
+    <div class="stat-card purple">
+      <div class="stat-card-header">
+        <div class="stat-label">Clients inscrits</div>
+        <div class="stat-icon purple"><i class="fas fa-users"></i></div>
+      </div>
+      <div class="stat-value">${users.length}</div>
+      <div class="stat-sub">comptes actifs</div>
+    </div>
+    <div class="stat-card orange">
+      <div class="stat-card-header">
+        <div class="stat-label">Panier moyen</div>
+        <div class="stat-icon orange"><i class="fas fa-chart-pie"></i></div>
+      </div>
+      <div class="stat-value">${(avgOrder/1000).toFixed(0)}k</div>
+      <div class="stat-sub">FCFA / commande</div>
+    </div>
+  `;
+
+  // Brand chart
+  const brandRev = {};
+  orders.forEach(o => o.items.forEach(item => {
+    brandRev[item.brand] = (brandRev[item.brand] || 0) + item.price * item.qty;
+  }));
+  const maxBrand = Math.max(...Object.values(brandRev), 1);
+  document.getElementById('brandChart').innerHTML = Object.entries(brandRev)
+    .sort((a,b) => b[1]-a[1])
+    .map(([brand, rev], i) => `
+      <div class="bar-item">
+        <div class="bar-label"><span>${brand}</span><span>${fmt(rev)}</span></div>
+        <div class="bar-track">
+          <div class="bar-fill" style="width:${(rev/maxBrand*100).toFixed(1)}%;background:${COLORS[i%COLORS.length]}"></div>
+        </div>
+      </div>
+    `).join('') || '<p class="empty-table"><i class="fas fa-chart-bar"></i>Aucune donnée</p>';
+
+  // Type chart
+  const typeCount = {};
+  orders.forEach(o => o.items.forEach(item => {
+    const p = products.find(p => p.id === item.id) || item;
+    typeCount[p.type || 'flagship'] = (typeCount[p.type || 'flagship'] || 0) + item.qty;
+  }));
+  const maxType = Math.max(...Object.values(typeCount), 1);
+  const typeLabels = { flagship: 'Flagship', mid: 'Mid-Range', budget: 'Budget' };
+  document.getElementById('typeChart').innerHTML = Object.entries(typeCount)
+    .sort((a,b) => b[1]-a[1])
+    .map(([type, cnt], i) => `
+      <div class="bar-item">
+        <div class="bar-label"><span>${typeLabels[type]||type}</span><span>${cnt} article(s)</span></div>
+        <div class="bar-track">
+          <div class="bar-fill" style="width:${(cnt/maxType*100).toFixed(1)}%;background:${COLORS[i%COLORS.length]}"></div>
+        </div>
+      </div>
+    `).join('') || '<p class="empty-table"><i class="fas fa-chart-bar"></i>Aucune donnée</p>';
+
+  // Recent orders
+  const recent = orders.slice().reverse().slice(0, 5);
+  document.getElementById('recentOrders').innerHTML = recent.length
+    ? recent.map(o => `
         <tr>
-          <td>#${order.id.toString().slice(-6)}</td>
-          <td>${order.customer.name}</td>
-          <td>${order.total.toLocaleString()} FCFA</td>
-          <td><span class="status status-${order.status}">${order.status === 'pending' ? 'En cours' : 'Livrée'}</span></td>
-          <td>${new Date(order.date).toLocaleDateString('fr-FR')}</td>
+          <td style="font-family:var(--mono);color:var(--muted)">#${o.id.toString().slice(-5)}</td>
+          <td><strong>${o.name}</strong></td>
+          <td style="color:var(--muted)">${o.items.length} article(s)</td>
+          <td class="price-cell">${fmt(o.total)}</td>
+          <td>${statusBadge(getOrderStatus(o.id))}</td>
         </tr>
-      `).join('');
-    }
+      `).join('')
+    : `<tr><td colspan="5"><div class="empty-table"><i class="fas fa-inbox"></i><p>Aucune commande</p></div></td></tr>`;
+}
 
-    // ===== PRODUCTS =====
-    function displayProducts() {
-      const tbody = document.getElementById('productsTable');
-      tbody.innerHTML = db.products.map(product => `
+// ─── ORDERS ─────────────────────────────────────────────────────────────────
+function renderOrders() {
+  loadData();
+  const q = (document.getElementById('orderSearch')?.value || '').toLowerCase();
+  const filtered = orders.filter(o =>
+    o.name.toLowerCase().includes(q) ||
+    o.phone.toLowerCase().includes(q) ||
+    o.address.toLowerCase().includes(q) ||
+    o.id.toString().includes(q)
+  ).reverse();
+
+  document.getElementById('ordersCountLabel').textContent = `// ${filtered.length} commande(s)`;
+  updateBadges();
+
+  document.getElementById('ordersTableBody').innerHTML = filtered.length
+    ? filtered.map(o => `
         <tr>
-          <td>${product.name}</td>
-          <td>${product.brand.toUpperCase()}</td>
-          <td>${product.price.toLocaleString()} FCFA</td>
-          <td>${product.type}</td>
+          <td style="font-family:var(--mono);color:var(--muted);font-size:0.75rem">#${o.id.toString().slice(-5)}</td>
+          <td style="font-family:var(--mono);font-size:0.75rem;color:var(--muted)">${o.date}</td>
+          <td><strong>${o.name}</strong></td>
+          <td style="font-family:var(--mono);font-size:0.8rem">${o.phone}</td>
+          <td style="color:var(--muted);font-size:0.8rem;max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${o.address}</td>
+          <td style="color:var(--muted)">${o.items.length}</td>
+          <td class="price-cell">${fmt(o.total)}</td>
           <td>
-            <button class="btn btn-primary" onclick="editProduct(${product.id})">Modifier</button>
-            <button class="btn btn-danger" onclick="deleteProduct(${product.id})">Supprimer</button>
+            <select class="status-select" onchange="changeStatus(${o.id}, this.value)"
+              style="background:var(--bg);border:1px solid var(--border);color:var(--text);padding:0.3rem 0.5rem;border-radius:6px;font-size:0.75rem;cursor:pointer">
+              <option value="new"      ${getOrderStatus(o.id)==='new'?'selected':''}>Nouveau</option>
+              <option value="pending"  ${getOrderStatus(o.id)==='pending'?'selected':''}>En attente</option>
+              <option value="done"     ${getOrderStatus(o.id)==='done'?'selected':''}>Livré</option>
+              <option value="canceled" ${getOrderStatus(o.id)==='canceled'?'selected':''}>Annulé</option>
+            </select>
+          </td>
+          <td>
+            <div class="actions-cell">
+              <button class="icon-btn" onclick="viewOrder(${o.id})" title="Voir détails"><i class="fas fa-eye"></i></button>
+              <button class="icon-btn" onclick="whatsappOrder(${o.id})" title="WhatsApp"><i class="fab fa-whatsapp" style="color:var(--green)"></i></button>
+              <button class="icon-btn del" onclick="deleteOrder(${o.id})" title="Supprimer"><i class="fas fa-trash"></i></button>
+            </div>
           </td>
         </tr>
-      `).join('');
-    }
+      `).join('')
+    : `<tr><td colspan="9"><div class="empty-table"><i class="fas fa-inbox"></i><p>Aucune commande</p></div></td></tr>`;
+}
 
-    function filterProducts() {
-      const search = document.getElementById('productSearch').value.toLowerCase();
-      const filtered = db.products.filter(p => 
-        p.name.toLowerCase().includes(search) || 
-        p.brand.toLowerCase().includes(search)
-      );
+function changeStatus(id, status) {
+  orderStatuses[id] = status;
+  saveStatuses();
+  updateBadges();
+}
 
-      const tbody = document.getElementById('productsTable');
-      tbody.innerHTML = filtered.map(product => `
+function viewOrder(id) {
+  const o = orders.find(x => x.id === id);
+  if (!o) return;
+  document.getElementById('orderDetailBody').innerHTML = `
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1.5rem">
+      <div>
+        <div style="font-size:0.7rem;color:var(--muted);font-family:var(--mono);text-transform:uppercase;letter-spacing:1px;margin-bottom:0.3rem">Client</div>
+        <div style="font-weight:700">${o.name}</div>
+      </div>
+      <div>
+        <div style="font-size:0.7rem;color:var(--muted);font-family:var(--mono);text-transform:uppercase;letter-spacing:1px;margin-bottom:0.3rem">Téléphone</div>
+        <div style="font-family:var(--mono)">${o.phone}</div>
+      </div>
+      <div>
+        <div style="font-size:0.7rem;color:var(--muted);font-family:var(--mono);text-transform:uppercase;letter-spacing:1px;margin-bottom:0.3rem">Date</div>
+        <div style="font-family:var(--mono)">${o.date}</div>
+      </div>
+      <div>
+        <div style="font-size:0.7rem;color:var(--muted);font-family:var(--mono);text-transform:uppercase;letter-spacing:1px;margin-bottom:0.3rem">Statut</div>
+        ${statusBadge(getOrderStatus(o.id))}
+      </div>
+      <div style="grid-column:1/-1">
+        <div style="font-size:0.7rem;color:var(--muted);font-family:var(--mono);text-transform:uppercase;letter-spacing:1px;margin-bottom:0.3rem">Adresse</div>
+        <div>${o.address}</div>
+      </div>
+    </div>
+
+    <div style="background:var(--bg);border-radius:10px;padding:1rem;margin-bottom:1rem">
+      <div style="font-size:0.7rem;color:var(--muted);font-family:var(--mono);text-transform:uppercase;letter-spacing:1px;margin-bottom:0.75rem">Articles commandés</div>
+      ${o.items.map(item => `
+        <div style="display:flex;justify-content:space-between;padding:0.5rem 0;border-bottom:1px solid var(--border);font-size:0.875rem">
+          <span>${item.brand} ${item.name} <span style="color:var(--muted)">x${item.qty}</span></span>
+          <span style="font-family:var(--mono);color:var(--accent)">${fmt(item.price * item.qty)}</span>
+        </div>
+      `).join('')}
+      <div style="display:flex;justify-content:space-between;padding:0.75rem 0 0;font-weight:700;font-size:1rem">
+        <span>TOTAL</span>
+        <span style="font-family:var(--mono);color:var(--accent)">${fmt(o.total)}</span>
+      </div>
+    </div>
+  `;
+  document.getElementById('orderDetailModal').classList.add('open');
+}
+
+function closeOrderModal() {
+  document.getElementById('orderDetailModal').classList.remove('open');
+}
+
+function whatsappOrder(id) {
+  const o = orders.find(x => x.id === id);
+  if (!o) return;
+  const lines = o.items.map(c => `- ${c.brand} ${c.name} x${c.qty}: ${fmt(c.price*c.qty)}`).join('\n');
+  const msg = encodeURIComponent(
+    `✅ *Confirmation commande #${id.toString().slice(-5)}*\n\nBonjour ${o.name},\nVotre commande est confirmée !\n\n${lines}\n\n*TOTAL: ${fmt(o.total)}*\n\nMerci pour votre achat — MobileShop Pro 📱`
+  );
+  window.open(`https://wa.me/${o.phone.replace(/\D/g,'')}?text=${msg}`, '_blank');
+}
+
+function deleteOrder(id) {
+  if (!confirm('Supprimer cette commande ?')) return;
+  orders = orders.filter(o => o.id !== id);
+  localStorage.setItem('msp_orders', JSON.stringify(orders));
+  renderOrders();
+  toast('Commande supprimée.');
+}
+
+function exportCSV() {
+  if (!orders.length) { toast('Aucune commande à exporter.', false); return; }
+  const rows = [['ID','Date','Client','Téléphone','Adresse','Articles','Total','Statut']];
+  orders.forEach(o => rows.push([
+    '#'+o.id.toString().slice(-5), o.date, o.name, o.phone, o.address,
+    o.items.length, o.total, getOrderStatus(o.id)
+  ]));
+  const csv = rows.map(r => r.map(c => `"${c}"`).join(',')).join('\n');
+  const a = document.createElement('a');
+  a.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv);
+  a.download = `commandes_${Date.now()}.csv`;
+  a.click();
+  toast('Export CSV téléchargé.');
+}
+
+// ─── PRODUCTS ───────────────────────────────────────────────────────────────
+function renderProductsTable() {
+  loadData();
+  const q = (document.getElementById('productSearch')?.value || '').toLowerCase();
+  const filtered = products.filter(p =>
+    p.name.toLowerCase().includes(q) || p.brand.toLowerCase().includes(q)
+  );
+
+  document.getElementById('prodCountLabel').textContent = `// ${filtered.length} produit(s)`;
+
+  const typeBadges = { flagship: 'badge-flagship', mid: 'badge-mid', budget: 'badge-budget' };
+  const dotClass   = { Apple:'dot-apple', Samsung:'dot-samsung', Xiaomi:'dot-xiaomi', Oppo:'dot-oppo' };
+
+  document.getElementById('productsTableBody').innerHTML = filtered.length
+    ? filtered.map(p => `
         <tr>
-          <td>${product.name}</td>
-          <td>${product.brand.toUpperCase()}</td>
-          <td>${product.price.toLocaleString()} FCFA</td>
-          <td>${product.type}</td>
+          <td style="font-family:var(--mono);color:var(--muted);font-size:0.75rem">${p.id}</td>
           <td>
-            <button class="btn btn-primary" onclick="editProduct(${product.id})">Modifier</button>
-            <button class="btn btn-danger" onclick="deleteProduct(${product.id})">Supprimer</button>
+            <div class="brand-chip">
+              <span class="brand-dot ${dotClass[p.brand]||''}"></span>
+              ${p.brand}
+            </div>
+          </td>
+          <td style="font-weight:600">${p.name}</td>
+          <td style="color:var(--muted);font-size:0.8rem">${p.specs}</td>
+          <td><span class="badge ${typeBadges[p.type]||'badge-mid'}">${p.type}</span></td>
+          <td class="price-cell">${fmt(p.price)}</td>
+          <td>
+            <div class="actions-cell">
+              <button class="icon-btn" onclick="openProductModal(${p.id})" title="Modifier"><i class="fas fa-edit"></i></button>
+              <button class="icon-btn del" onclick="deleteProduct(${p.id})" title="Supprimer"><i class="fas fa-trash"></i></button>
+            </div>
           </td>
         </tr>
-      `).join('');
+      `).join('')
+    : `<tr><td colspan="7"><div class="empty-table"><i class="fas fa-mobile-alt"></i><p>Aucun produit</p></div></td></tr>`;
+}
+
+function openProductModal(id = null) {
+  document.getElementById('editProductId').value = id || '';
+  if (id) {
+    const p = products.find(x => x.id === id);
+    if (!p) return;
+    document.getElementById('productModalTitle').textContent = 'Modifier le produit';
+    document.getElementById('pBrand').value = p.brand;
+    document.getElementById('pType').value  = p.type;
+    document.getElementById('pName').value  = p.name;
+    document.getElementById('pSpecs').value = p.specs;
+    document.getElementById('pPrice').value = p.price;
+  } else {
+    document.getElementById('productModalTitle').textContent = 'Nouveau produit';
+    document.getElementById('pBrand').value = 'Apple';
+    document.getElementById('pType').value  = 'flagship';
+    document.getElementById('pName').value  = '';
+    document.getElementById('pSpecs').value = '';
+    document.getElementById('pPrice').value = '';
+  }
+  document.getElementById('productModal').classList.add('open');
+}
+
+function closeProductModal() {
+  document.getElementById('productModal').classList.remove('open');
+}
+
+function saveProduct() {
+  const brand = document.getElementById('pBrand').value;
+  const type  = document.getElementById('pType').value;
+  const name  = document.getElementById('pName').value.trim();
+  const specs = document.getElementById('pSpecs').value.trim();
+  const price = parseInt(document.getElementById('pPrice').value);
+  const editId = document.getElementById('editProductId').value;
+
+  if (!name || !specs || !price) { toast('Remplissez tous les champs.', false); return; }
+
+  if (editId) {
+    const idx = products.findIndex(p => p.id === parseInt(editId));
+    if (idx !== -1) {
+      products[idx] = { ...products[idx], brand, type, name, specs, price };
     }
+  } else {
+    const newId = Math.max(...products.map(p => p.id), 0) + 1;
+    products.push({ id: newId, brand, type, name, specs, price, icon: '📱' });
+  }
 
-    function openProductModal() {
-      currentEditingProductId = null;
-      document.getElementById('productName').value = '';
-      document.getElementById('productBrand').value = '';
-      document.getElementById('productType').value = '';
-      document.getElementById('productPrice').value = '';
-      document.getElementById('productScreen').value = '';
-      document.getElementById('productSpecs').value = '';
-      document.getElementById('productImage').value = '';
-      document.getElementById('productModal').classList.add('active');
-    }
+  saveProducts();
+  closeProductModal();
+  renderProductsTable();
+  toast(editId ? 'Produit mis à jour.' : 'Produit ajouté.');
+}
 
-    function closeProductModal() {
-      document.getElementById('productModal').classList.remove('active');
-    }
+function deleteProduct(id) {
+  if (!confirm('Supprimer ce produit du catalogue ?')) return;
+  products = products.filter(p => p.id !== id);
+  saveProducts();
+  renderProductsTable();
+  toast('Produit supprimé.');
+}
 
-    function editProduct(id) {
-      const product = db.products.find(p => p.id === id);
-      if (!product) return;
+// ─── USERS ──────────────────────────────────────────────────────────────────
+function renderUsersTable() {
+  loadData();
+  const q = (document.getElementById('userSearch')?.value || '').toLowerCase();
+  const filtered = users.filter(u =>
+    u.name.toLowerCase().includes(q) || u.email.toLowerCase().includes(q)
+  );
 
-      currentEditingProductId = id;
-      document.getElementById('productName').value = product.name;
-      document.getElementById('productBrand').value = product.brand;
-      document.getElementById('productType').value = product.type;
-      document.getElementById('productPrice').value = product.price;
-      document.getElementById('productScreen').value = product.screen;
-      document.getElementById('productSpecs').value = product.specs;
-      document.getElementById('productImage').value = product.image;
-      document.getElementById('productModal').classList.add('active');
-    }
+  document.getElementById('usersCountLabel').textContent = `// ${filtered.length} client(s)`;
 
-    function saveProduct(e) {
-      e.preventDefault();
-
-      const productData = {
-        name: document.getElementById('productName').value,
-        brand: document.getElementById('productBrand').value,
-        type: document.getElementById('productType').value,
-        price: parseInt(document.getElementById('productPrice').value),
-        screen: document.getElementById('productScreen').value,
-        specs: document.getElementById('productSpecs').value,
-        image: document.getElementById('productImage').value
-      };
-
-      if (currentEditingProductId) {
-        const index = db.products.findIndex(p => p.id === currentEditingProductId);
-        db.products[index] = { ...db.products[index], ...productData };
-        showAlert('Produit modifié avec succès!', 'success');
-      } else {
-        db.products.push({ id: Date.now(), ...productData });
-        showAlert('Produit ajouté avec succès!', 'success');
-      }
-
-      saveDB();
-      displayProducts();
-      closeProductModal();
-      updateDashboard();
-    }
-
-    function deleteProduct(id) {
-      if (confirm('Êtes-vous sûr?')) {
-        db.products = db.products.filter(p => p.id !== id);
-        saveDB();
-        displayProducts();
-        updateDashboard();
-        showAlert('Produit supprimé!', 'success');
-      }
-    }
-
-    // ===== ORDERS =====
-    function loadOrders() {
-      const ordersData = JSON.parse(localStorage.getItem('orders')) || [];
-      db.orders = ordersData;
-    }
-
-    function displayOrders() {
-      const tbody = document.getElementById('ordersTable');
-      tbody.innerHTML = db.orders.map(order => `
-        <tr>
-          <td>#${order.id.toString().slice(-6)}</td>
-          <td>${order.customer.name}</td>
-          <td>${order.customer.phone}</td>
-          <td>${order.total.toLocaleString()} FCFA</td>
-          <td><span class="status status-${order.status}">${order.status === 'pending' ? 'En cours' : 'Livrée'}</span></td>
-          <td>${new Date(order.date).toLocaleDateString('fr-FR')}</td>
-          <td>
-            <button class="btn btn-success" onclick="completeOrder(${order.id})">Compléter</button>
-          </td>
-        </tr>
-      `).join('');
-    }
-
-    function filterOrders() {
-      const search = document.getElementById('orderSearch').value.toLowerCase();
-      const filtered = db.orders.filter(o =>
-        o.id.toString().includes(search) ||
-        o.customer.name.toLowerCase().includes(search) ||
-        o.customer.phone.includes(search)
-      );
-
-      const tbody = document.getElementById('ordersTable');
-      tbody.innerHTML = filtered.map(order => `
-        <tr>
-          <td>#${order.id.toString().slice(-6)}</td>
-          <td>${order.customer.name}</td>
-          <td>${order.customer.phone}</td>
-          <td>${order.total.toLocaleString()} FCFA</td>
-          <td><span class="status status-${order.status}">${order.status === 'pending' ? 'En cours' : 'Livrée'}</span></td>
-          <td>${new Date(order.date).toLocaleDateString('fr-FR')}</td>
-          <td>
-            <button class="btn btn-success" onclick="completeOrder(${order.id})">Compléter</button>
-          </td>
-        </tr>
-      `).join('');
-    }
-
-    function completeOrder(id) {
-      const order = db.orders.find(o => o.id === id);
-      if (order) {
-        order.status = 'completed';
-        saveDB();
-        displayOrders();
-        updateDashboard();
-        showAlert('Commande marquée comme livrée!', 'success');
-      }
-    }
-
-    // ===== USERS =====
-    function loadUsers() {
-      const usersData = JSON.parse(localStorage.getItem('users')) || [];
-      db.users = usersData;
-    }
-
-    function displayUsers() {
-      const tbody = document.getElementById('usersTable');
-      tbody.innerHTML = db.users.map(user => {
-        const userOrders = db.orders.filter(o => o.customer.phone === user.phone).length;
+  document.getElementById('usersTableBody').innerHTML = filtered.length
+    ? filtered.map((u, i) => {
+        const userOrders = orders.filter(o => o.userId === u.email);
+        const spent = userOrders.reduce((s, o) => s + o.total, 0);
+        const initials = u.name.split(' ').map(w => w[0]).join('').slice(0,2).toUpperCase();
         return `
           <tr>
-            <td>${user.name}</td>
-            <td>${user.email}</td>
-            <td>${user.phone}</td>
-            <td>${userOrders}</td>
+            <td style="font-family:var(--mono);color:var(--muted)">${i+1}</td>
             <td>
-              <button class="btn btn-danger" onclick="deleteUser('${user.email}')">Supprimer</button>
+              <div class="user-cell">
+                <div class="user-avatar-sm">${initials}</div>
+                <div>
+                  <div class="user-name-cell">${u.name}</div>
+                  <div class="user-email-cell">${u.email}</div>
+                </div>
+              </div>
+            </td>
+            <td style="font-family:var(--mono);font-size:0.8rem">${u.phone||'—'}</td>
+            <td style="font-family:var(--mono);color:var(--accent)">${userOrders.length}</td>
+            <td class="price-cell">${fmt(spent)}</td>
+            <td>
+              <div class="actions-cell">
+                <button class="icon-btn del" onclick="deleteUser('${u.email}')" title="Supprimer"><i class="fas fa-trash"></i></button>
+              </div>
             </td>
           </tr>
         `;
-      }).join('');
-    }
+      }).join('')
+    : `<tr><td colspan="6"><div class="empty-table"><i class="fas fa-users"></i><p>Aucun client inscrit</p></div></td></tr>`;
+}
 
-    function filterUsers() {
-      const search = document.getElementById('userSearch').value.toLowerCase();
-      const filtered = db.users.filter(u =>
-        u.name.toLowerCase().includes(search) ||
-        u.email.toLowerCase().includes(search) ||
-        u.phone.includes(search)
-      );
+function deleteUser(email) {
+  if (!confirm(`Supprimer le compte de ${email} ?`)) return;
+  users = users.filter(u => u.email !== email);
+  localStorage.setItem('msp_users', JSON.stringify(users));
+  if (localStorage.getItem('msp_current')) {
+    const cur = JSON.parse(localStorage.getItem('msp_current'));
+    if (cur.email === email) localStorage.removeItem('msp_current');
+  }
+  renderUsersTable();
+  toast('Client supprimé.');
+}
 
-      const tbody = document.getElementById('usersTable');
-      tbody.innerHTML = filtered.map(user => {
-        const userOrders = db.orders.filter(o => o.customer.phone === user.phone).length;
-        return `
-          <tr>
-            <td>${user.name}</td>
-            <td>${user.email}</td>
-            <td>${user.phone}</td>
-            <td>${userOrders}</td>
-            <td>
-              <button class="btn btn-danger" onclick="deleteUser('${user.email}')">Supprimer</button>
-            </td>
-          </tr>
-        `;
-      }).join('');
-    }
+// ─── ANALYTICS ──────────────────────────────────────────────────────────────
+function renderAnalytics() {
+  loadData();
 
-    function deleteUser(email) {
-      if (confirm('Êtes-vous sûr?')) {
-        db.users = db.users.filter(u => u.email !== email);
-        saveDB();
-        displayUsers();
-        showAlert('Utilisateur supprimé!', 'success');
-      }
-    }
+  const totalRev = orders.reduce((s, o) => s + o.total, 0);
+  const delivered = orders.filter(o => getOrderStatus(o.id) === 'done').length;
+  const canceled  = orders.filter(o => getOrderStatus(o.id) === 'canceled').length;
+  const convRate  = orders.length ? ((delivered/orders.length)*100).toFixed(0) : 0;
 
-    // ===== ANALYTICS =====
-    function updateAnalytics() {
-      const totalRevenue = db.orders.reduce((sum, o) => sum + o.total, 0);
-      const avgOrder = db.orders.length > 0 ? totalRevenue / db.orders.length : 0;
-      document.getElementById('avgOrderValue').textContent = avgOrder.toLocaleString() + ' FCFA';
+  document.getElementById('analyticsKpi').innerHTML = `
+    <div class="stat-card blue">
+      <div class="stat-card-header"><div class="stat-label">Total revenus</div><div class="stat-icon blue"><i class="fas fa-coins"></i></div></div>
+      <div class="stat-value">${(totalRev/1000).toFixed(0)}k</div><div class="stat-sub">FCFA</div>
+    </div>
+    <div class="stat-card green">
+      <div class="stat-card-header"><div class="stat-label">Taux livraison</div><div class="stat-icon green"><i class="fas fa-truck"></i></div></div>
+      <div class="stat-value">${convRate}%</div><div class="stat-sub">${delivered} livrée(s)</div>
+    </div>
+    <div class="stat-card orange">
+      <div class="stat-card-header"><div class="stat-label">Annulations</div><div class="stat-icon orange"><i class="fas fa-ban"></i></div></div>
+      <div class="stat-value">${canceled}</div><div class="stat-sub">commande(s)</div>
+    </div>
+    <div class="stat-card purple">
+      <div class="stat-card-header"><div class="stat-label">Produits actifs</div><div class="stat-icon purple"><i class="fas fa-mobile-alt"></i></div></div>
+      <div class="stat-value">${products.length}</div><div class="stat-sub">dans le catalogue</div>
+    </div>
+  `;
 
-      const completedOrders = db.orders.filter(o => o.status === 'completed').length;
-      const completionRate = db.orders.length > 0 ? Math.round((completedOrders / db.orders.length) * 100) : 0;
-      document.getElementById('completionRate').textContent = completionRate + '%';
+  // Top products
+  const prodCount = {};
+  orders.forEach(o => o.items.forEach(item => {
+    const key = `${item.brand} ${item.name}`;
+    prodCount[key] = (prodCount[key] || 0) + item.qty;
+  }));
+  const topProds = Object.entries(prodCount).sort((a,b) => b[1]-a[1]).slice(0,5);
+  const maxProd = Math.max(...topProds.map(x => x[1]), 1);
+  document.getElementById('topProductsChart').innerHTML = topProds.length
+    ? topProds.map(([name, cnt], i) => `
+        <div class="bar-item">
+          <div class="bar-label"><span style="font-size:0.75rem">${name}</span><span>${cnt} vendu(s)</span></div>
+          <div class="bar-track"><div class="bar-fill" style="width:${(cnt/maxProd*100).toFixed(1)}%;background:${COLORS[i]}"></div></div>
+        </div>
+      `).join('')
+    : '<div class="empty-table"><i class="fas fa-chart-bar"></i><p>Aucune donnée</p></div>';
 
-      // Top product
-      const productCounts = {};
-      db.orders.forEach(order => {
-        order.items.forEach(item => {
-          productCounts[item.name] = (productCounts[item.name] || 0) + item.qty;
-        });
-      });
+  // Price range
+  const ranges = { '< 100k': 0, '100k-300k': 0, '300k-600k': 0, '600k+': 0 };
+  orders.forEach(o => {
+    if      (o.total < 100000)  ranges['< 100k']++;
+    else if (o.total < 300000)  ranges['100k-300k']++;
+    else if (o.total < 600000)  ranges['300k-600k']++;
+    else                         ranges['600k+']++;
+  });
+  const maxRange = Math.max(...Object.values(ranges), 1);
+  const rangeColors = ['#00e5a0','#00d4ff','#7c3aed','#ff8c00'];
+  document.getElementById('priceRangeChart').innerHTML = Object.entries(ranges).map(([label, cnt], i) => `
+    <div class="bar-item">
+      <div class="bar-label"><span>${label} FCFA</span><span>${cnt} commande(s)</span></div>
+      <div class="bar-track"><div class="bar-fill" style="width:${(cnt/maxRange*100).toFixed(1)}%;background:${rangeColors[i]}"></div></div>
+    </div>
+  `).join('');
+}
 
-      const topProduct = Object.keys(productCounts).length > 0
-        ? Object.keys(productCounts).reduce((a, b) => productCounts[a] > productCounts[b] ? a : b)
-        : '--';
-      document.getElementById('topProduct').textContent = topProduct;
+// ─── SETTINGS ───────────────────────────────────────────────────────────────
+function saveAdminCreds() {
+  const u = document.getElementById('setUser').value.trim();
+  const p = document.getElementById('setPass').value;
+  const current = JSON.parse(localStorage.getItem('msp_admin_creds')) || ADMIN_CREDS;
+  const updated = { user: u || current.user, pass: p || current.pass };
+  localStorage.setItem('msp_admin_creds', JSON.stringify(updated));
+  toast('Identifiants sauvegardés.');
+}
 
-      document.getElementById('avgRating').textContent = '4.8/5';
-    }
+function saveShopSettings() {
+  const settings = {
+    name:         document.getElementById('setShopName').value,
+    whatsapp:     document.getElementById('setWhatsapp').value,
+    freeShipping: parseInt(document.getElementById('setFreeShipping').value) || 100000,
+  };
+  localStorage.setItem('msp_shop_settings', JSON.stringify(settings));
+  toast('Paramètres boutique sauvegardés.');
+}
 
-    // ===== SETTINGS =====
-    function loadSettings() {
-      document.getElementById('storeName').value = db.settings.storeName;
-      document.getElementById('storeEmail').value = db.settings.storeEmail;
-      document.getElementById('storePhone').value = db.settings.storePhone;
-      document.getElementById('storeAddress').value = db.settings.storeAddress;
-      document.getElementById('shippingFee').value = db.settings.shippingFee;
-    }
+function clearOrders() {
+  if (!confirm('Vider toutes les commandes ? Cette action est irréversible.')) return;
+  localStorage.removeItem('msp_orders');
+  localStorage.removeItem('msp_order_statuses');
+  loadData();
+  toast('Commandes effacées.');
+}
 
-    function saveSettings() {
-      db.settings.storeName = document.getElementById('storeName').value;
-      db.settings.storeEmail = document.getElementById('storeEmail').value;
-      db.settings.storePhone = document.getElementById('storePhone').value;
-      db.settings.storeAddress = document.getElementById('storeAddress').value;
-      db.settings.shippingFee = parseInt(document.getElementById('shippingFee').value);
-      saveDB();
-      showAlert('Paramètres sauvegardés!', 'success');
-    }
+function clearAll() {
+  if (!confirm('⚠️ Réinitialisation complète : toutes les données seront perdues. Continuer ?')) return;
+  ['msp_cart','msp_orders','msp_users','msp_current','msp_order_statuses','msp_products'].forEach(k => localStorage.removeItem(k));
+  loadData();
+  initDashboard();
+  toast('Données réinitialisées.');
+}
 
-    // ===== UI =====
-    function showSection(sectionId) {
-      document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-      document.querySelectorAll('.menu-link').forEach(l => l.classList.remove('active'));
-      document.getElementById(sectionId).classList.add('active');
-      event.target.closest('.menu-link').classList.add('active');
-
-      if (sectionId === 'dashboard') {
-        updateDashboard();
-      }
-    }
-
-    function showAlert(msg, type) {
-      const alertEl = document.getElementById(type === 'success' ? 'successAlert' : 'errorAlert');
-      alertEl.textContent = msg;
-      alertEl.classList.add('show');
-      setTimeout(() => alertEl.classList.remove('show'), 3000);
-    }
-
-    function logout() {
-      if (confirm('Êtes-vous sûr de vouloir vous déconnecter?')) {
-        localStorage.removeItem('adminLoggedIn');
-        window.location.href = 'index.html';
-      }
-    }
-
-    window.addEventListener('DOMContentLoaded', init);
-  </script>
+function exportAllData() {
+  const data = {
+    orders:    JSON.parse(localStorage.getItem('msp_orders'))   || [],
+    users:     JSON.parse(localStorage.getItem('msp_users'))    || [],
+    products:  JSON.parse(localStorage.getItem('msp_products')) || [],
+    statuses:  JSON.parse(localStorage.getItem('msp_order_statuses')) || {},
+    exported:  new Date().toISOString(),
+  };
+  const a = document.createElement('a');
+  a.href = 'data:application/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(data, null, 2));
+  a.download = `mobileshop_backup_${Date.now()}.json`;
+  a.click();
+  toast('Sauvegarde téléchargée.');
+}
+</script>
 </body>
 </html>
