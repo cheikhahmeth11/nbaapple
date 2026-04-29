@@ -4,56 +4,937 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>MobileShop Pro - Boutique Premium</title>
-
-  <!-- SEO -->
   <meta name="description" content="Achetez les meilleurs smartphones au Sénégal avec MobileShop Pro. Livraison rapide et paiement sécurisé.">
-
-  <!-- Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
 
-  <!-- THEME (un seul fichier) -->
-  <link rel="stylesheet" href="styles.css" id="themeStylesheet">
-  <button class="btn-header" onclick="openCartModal()" aria-label="Ouvrir le panier"></button>
-  <button class="btn-header" onclick="toggleTheme()" title="Changer thème">
-  <i class="fas fa-moon"></i>
-</button>
-<button class="btn-header" onclick="openCartModal()" aria-label="Ouvrir le panier"></button>
+    :root {
+      --primary: #667eea;
+      --primary-dark: #5a67d8;
+      --secondary: #f59e0b;
+      --danger: #ef4444;
+      --success: #10b981;
+      --dark: #0f172a;
+      --dark2: #1e293b;
+      --dark3: #334155;
+      --light: #e2e8f0;
+      --light2: #cbd5e1;
+      --light3: #94a3b8;
+      --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: var(--dark);
+      color: var(--light);
+      line-height: 1.6;
+      transition: background 0.3s ease, color 0.3s ease;
+    }
+
+    body.light-theme {
+      --dark: #f8fafc;
+      --dark2: #ffffff;
+      --dark3: #e2e8f0;
+      --light: #1e293b;
+      --light2: #334155;
+      --light3: #64748b;
+    }
+
+    /* NAVBAR */
+    nav {
+      background: var(--dark2);
+      border-bottom: 1px solid var(--dark3);
+      padding: 1rem 0;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    }
+
+    .nav-container {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 1.5rem;
+      gap: 2rem;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-size: 1.5rem;
+      font-weight: 700;
+      background: var(--gradient-primary);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      cursor: pointer;
+      transition: transform 0.2s;
+      text-decoration: none;
+    }
+
+    .logo:hover { transform: scale(1.05); }
+
+    .logo i {
+      font-size: 1.8rem;
+      color: var(--primary);
+      -webkit-text-fill-color: var(--primary);
+    }
+
+    .nav-links { display: flex; gap: 2rem; flex: 1; }
+
+    .nav-link {
+      color: var(--light3);
+      text-decoration: none;
+      transition: color 0.2s;
+      font-weight: 500;
+      padding: 0.5rem 0;
+    }
+
+    .nav-link:hover { color: var(--primary); }
+
+    .nav-actions { display: flex; align-items: center; gap: 1rem; }
+
+    .btn-header {
+      background: transparent;
+      border: none;
+      color: var(--light);
+      cursor: pointer;
+      font-size: 1.2rem;
+      position: relative;
+      transition: all 0.2s;
+      padding: 0.5rem;
+      display: flex;
+      align-items: center;
+    }
+
+    .btn-header:hover { color: var(--primary); transform: scale(1.1); }
+
+    .count-badge {
+      position: absolute;
+      top: -8px;
+      right: -8px;
+      background: var(--danger);
+      color: white;
+      border-radius: 50%;
+      width: 22px;
+      height: 22px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.7rem;
+      font-weight: bold;
+    }
+
+    .menu-toggle {
+      display: none;
+      background: transparent;
+      border: none;
+      color: var(--light);
+      font-size: 1.5rem;
+      cursor: pointer;
+    }
+
+    /* MOBILE NAV */
+    .mobile-nav {
+      display: none;
+      background: var(--dark2);
+      border-bottom: 1px solid var(--dark3);
+      padding: 1rem 1.5rem;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .mobile-nav.open { display: flex; }
+
+    /* HERO */
+    .hero {
+      background: var(--gradient-primary);
+      color: white;
+      padding: 6rem 2rem;
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+
+    .hero h1 {
+      font-size: clamp(2rem, 6vw, 3.5rem);
+      margin-bottom: 1rem;
+      font-weight: 800;
+      letter-spacing: -1px;
+    }
+
+    .hero p { font-size: 1.3rem; opacity: 0.95; }
+
+    /* SEARCH & FILTERS */
+    .search-section {
+      max-width: 1400px;
+      margin: 2rem auto;
+      padding: 0 1.5rem;
+    }
+
+    .search-bar { position: relative; margin-bottom: 2rem; }
+
+    .search-icon {
+      position: absolute;
+      left: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--light3);
+      pointer-events: none;
+    }
+
+    .search-input {
+      width: 100%;
+      padding: 1rem 1rem 1rem 2.5rem;
+      border: 2px solid var(--dark3);
+      border-radius: 12px;
+      background: var(--dark2);
+      color: var(--light);
+      font-size: 1rem;
+      transition: all 0.2s;
+    }
+
+    .search-input:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 15px rgba(102, 126, 234, 0.3);
+    }
+
+    .filters-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+      padding: 1.5rem;
+      background: var(--dark2);
+      border-radius: 15px;
+      border: 1px solid var(--dark3);
+    }
+
+    .filter-group { display: flex; flex-direction: column; gap: 1rem; }
+
+    .filter-title {
+      font-weight: 600;
+      color: var(--light);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.95rem;
+    }
+
+    .filter-options { display: flex; flex-direction: column; gap: 0.7rem; }
+
+    .filter-option { display: flex; align-items: center; gap: 0.6rem; }
+
+    .filter-option input[type="checkbox"] {
+      cursor: pointer;
+      width: 18px;
+      height: 18px;
+      accent-color: var(--primary);
+    }
+
+    .filter-option label {
+      cursor: pointer;
+      color: var(--light3);
+      transition: color 0.2s;
+      font-size: 0.9rem;
+    }
+
+    .filter-option label:hover { color: var(--light); }
+
+    .price-inputs { display: flex; align-items: center; gap: 0.5rem; }
+
+    .price-inputs input {
+      flex: 1;
+      padding: 0.7rem;
+      border: 1px solid var(--dark3);
+      border-radius: 8px;
+      background: var(--dark);
+      color: var(--light);
+      font-size: 0.9rem;
+    }
+
+    .price-inputs span { color: var(--light3); }
+
+    .reset-btn {
+      background: transparent;
+      border: 2px solid var(--dark3);
+      color: var(--light3);
+      padding: 0.7rem 1rem;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+      width: 100%;
+      font-weight: 600;
+    }
+
+    .reset-btn:hover {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: white;
+    }
+
+    /* PRODUCTS */
+    .products-section {
+      max-width: 1400px;
+      margin: 2rem auto;
+      padding: 0 1.5rem 3rem;
+    }
+
+    .products-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .results-count { color: var(--light3); font-weight: 500; }
+
+    .sort-select {
+      padding: 0.75rem 1rem;
+      border: 2px solid var(--dark3);
+      border-radius: 8px;
+      background: var(--dark2);
+      color: var(--light);
+      cursor: pointer;
+      font-size: 0.9rem;
+      transition: all 0.2s;
+    }
+
+    .sort-select:hover, .sort-select:focus { border-color: var(--primary); outline: none; }
+
+    .products-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .product-card {
+      background: var(--dark2);
+      border: 1px solid var(--dark3);
+      border-radius: 15px;
+      overflow: hidden;
+      transition: all 0.3s;
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+    }
+
+    .product-card:hover {
+      transform: translateY(-8px);
+      border-color: var(--primary);
+      box-shadow: 0 15px 40px rgba(102, 126, 234, 0.2);
+    }
+
+    .product-image {
+      width: 100%;
+      height: 180px;
+      background: linear-gradient(135deg, var(--dark) 0%, var(--dark3) 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 4rem;
+      color: var(--primary);
+    }
+
+    .product-body {
+      padding: 1.5rem;
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .product-brand {
+      font-size: 0.75rem;
+      color: var(--primary);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 0.5rem;
+    }
+
+    .product-name {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--light);
+      margin-bottom: 0.5rem;
+      line-height: 1.3;
+      min-height: 2.6rem;
+    }
+
+    .product-specs {
+      font-size: 0.75rem;
+      color: var(--light3);
+      margin-bottom: 1rem;
+      line-height: 1.5;
+      flex-grow: 1;
+    }
+
+    .product-price {
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 1rem;
+    }
+
+    .add-to-cart-btn {
+      background: var(--primary);
+      color: white;
+      border: none;
+      padding: 0.75rem 1rem;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.2s;
+      width: 100%;
+    }
+
+    .add-to-cart-btn:hover { background: var(--primary-dark); transform: scale(1.02); }
+    .add-to-cart-btn:active { transform: scale(0.98); }
+
+    /* ABOUT */
+    .about-section {
+      max-width: 1200px;
+      margin: 4rem auto;
+      padding: 0 1.5rem;
+    }
+
+    .section-title {
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: var(--light);
+      margin-bottom: 2rem;
+      text-align: center;
+      background: var(--gradient-primary);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .about-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 2rem;
+    }
+
+    .about-card {
+      background: rgba(102, 126, 234, 0.1);
+      padding: 2rem;
+      border-radius: 15px;
+      text-align: center;
+      border: 1px solid rgba(102, 126, 234, 0.3);
+      transition: all 0.3s;
+    }
+
+    .about-card:hover {
+      border-color: var(--primary);
+      background: rgba(102, 126, 234, 0.15);
+      transform: translateY(-5px);
+    }
+
+    .about-card i { font-size: 2.5rem; color: var(--primary); margin-bottom: 1rem; }
+    .about-card h3 { color: var(--light); margin-bottom: 0.5rem; }
+    .about-card p { color: var(--light3); }
+
+    /* REVIEWS */
+    .reviews-section {
+      max-width: 1400px;
+      margin: 4rem auto;
+      padding: 0 1.5rem 3rem;
+    }
+
+    .reviews-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .review-card {
+      background: var(--dark2);
+      border: 1px solid var(--dark3);
+      padding: 1.5rem;
+      border-radius: 15px;
+      transition: all 0.3s;
+    }
+
+    .review-card:hover {
+      transform: translateY(-5px);
+      border-color: var(--primary);
+      box-shadow: 0 10px 30px rgba(102, 126, 234, 0.2);
+    }
+
+    .review-stars { color: var(--secondary); font-size: 1.1rem; margin-bottom: 1rem; letter-spacing: 2px; }
+    .review-text { color: var(--light3); margin-bottom: 1rem; line-height: 1.6; }
+    .review-user { color: var(--light); font-weight: 600; font-size: 0.9rem; }
+
+    /* FOOTER */
+    footer {
+      background: var(--dark2);
+      border-top: 1px solid var(--dark3);
+      margin-top: 4rem;
+      padding: 3rem 0 0;
+    }
+
+    .footer-container { max-width: 1400px; margin: 0 auto; padding: 0 1.5rem; }
+
+    .footer-content {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 2rem;
+      margin-bottom: 2rem;
+    }
+
+    .footer-section h3 { color: var(--light); margin-bottom: 1rem; font-size: 1.1rem; }
+
+    .footer-logo {
+      font-size: 1.3rem;
+      font-weight: 700;
+      background: var(--gradient-primary);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 1rem;
+    }
+
+    .footer-desc { color: var(--light3); margin-bottom: 1rem; line-height: 1.6; }
+
+    .social-links { display: flex; gap: 1rem; }
+
+    .social-link {
+      width: 40px;
+      height: 40px;
+      background: var(--dark);
+      border: 1px solid var(--dark3);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--primary);
+      transition: all 0.2s;
+      text-decoration: none;
+    }
+
+    .social-link:hover {
+      background: var(--primary);
+      color: white;
+      border-color: var(--primary);
+      transform: scale(1.1);
+    }
+
+    .footer-section ul { list-style: none; }
+    .footer-section ul li { margin-bottom: 0.7rem; }
+
+    .footer-section ul li a {
+      color: var(--light3);
+      text-decoration: none;
+      transition: color 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .footer-section ul li a:hover { color: var(--primary); }
+
+    .footer-contact { display: flex; flex-direction: column; gap: 1rem; }
+
+    .contact-item { display: flex; align-items: center; gap: 0.75rem; color: var(--light3); }
+    .contact-item i { color: var(--primary); font-size: 1.1rem; min-width: 20px; }
+
+    .footer-divider { height: 1px; background: var(--dark3); margin: 2rem 0; }
+
+    .footer-bottom {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+      padding: 1rem 0 2rem;
+    }
+
+    .copyright { color: var(--light3); font-size: 0.9rem; }
+
+    .footer-links { display: flex; gap: 2rem; flex-wrap: wrap; }
+
+    .footer-link {
+      color: var(--light3);
+      text-decoration: none;
+      transition: color 0.2s;
+      font-size: 0.9rem;
+    }
+
+    .footer-link:hover { color: var(--primary); }
+
+    /* MODALS */
+    .overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.7);
+      z-index: 999;
+      animation: fadeIn 0.2s ease;
+    }
+
+    .overlay.active { display: block; }
+
+    .modal {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 90%;
+      max-width: 500px;
+      max-height: 85vh;
+      background: var(--dark2);
+      border: 1px solid var(--dark3);
+      border-radius: 20px;
+      z-index: 1000;
+      overflow-y: auto;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+      animation: slideIn 0.3s ease;
+    }
+
+    .modal.active { display: flex; flex-direction: column; }
+
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+    @keyframes slideIn {
+      from { transform: translate(-50%, -48%); opacity: 0; }
+      to { transform: translate(-50%, -50%); opacity: 1; }
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.5rem;
+      border-bottom: 1px solid var(--dark3);
+      flex-shrink: 0;
+    }
+
+    .modal-title { font-size: 1.3rem; font-weight: 700; color: var(--light); }
+
+    .close-btn {
+      background: transparent;
+      border: none;
+      color: var(--light3);
+      font-size: 1.5rem;
+      cursor: pointer;
+      transition: color 0.2s;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .close-btn:hover { color: var(--light); }
+
+    .modal-content { flex: 1; padding: 1.5rem; overflow-y: auto; }
+    .modal-footer { padding: 1.5rem; border-top: 1px solid var(--dark3); flex-shrink: 0; }
+
+    .form-group { margin-bottom: 1.5rem; }
+
+    .form-label {
+      display: block;
+      margin-bottom: 0.5rem;
+      color: var(--light3);
+      font-weight: 500;
+      font-size: 0.9rem;
+    }
+
+    .form-input {
+      width: 100%;
+      padding: 0.75rem;
+      border: 1px solid var(--dark3);
+      border-radius: 8px;
+      background: var(--dark);
+      color: var(--light);
+      font-size: 0.95rem;
+      transition: border-color 0.2s;
+    }
+
+    .form-input:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 10px rgba(102, 126, 234, 0.2);
+    }
+
+    .cart-summary {
+      background: var(--dark);
+      padding: 1rem;
+      border-radius: 10px;
+      margin-bottom: 1.5rem;
+    }
+
+    .summary-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 0.5rem 0;
+      color: var(--light3);
+      font-size: 0.95rem;
+    }
+
+    .summary-total {
+      border-top: 1px solid var(--dark3);
+      padding-top: 1rem;
+      margin-top: 1rem;
+      font-weight: 700;
+      color: var(--light);
+      font-size: 1.1rem;
+    }
+
+    .btn {
+      padding: 0.75rem 1.5rem;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.2s;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      font-size: 0.95rem;
+    }
+
+    .btn-primary { background: var(--primary); color: white; }
+    .btn-primary:hover { background: var(--primary-dark); transform: translateY(-2px); }
+
+    .btn-secondary { background: var(--secondary); color: white; }
+    .btn-secondary:hover { background: #d97706; transform: translateY(-2px); }
+
+    /* CART ITEMS */
+    .cart-item {
+      background: var(--dark);
+      padding: 1rem;
+      border-radius: 10px;
+      margin-bottom: 1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .cart-item-info { flex: 1; min-width: 120px; }
+    .cart-item-name { font-weight: 600; color: var(--light); margin-bottom: 0.25rem; }
+    .cart-item-price { color: var(--primary); font-weight: 600; font-size: 0.95rem; }
+
+    .cart-item-qty {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: var(--dark2);
+      border-radius: 8px;
+      padding: 0.5rem;
+    }
+
+    .qty-btn {
+      background: transparent;
+      border: none;
+      color: var(--primary);
+      width: 28px;
+      height: 28px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      transition: all 0.2s;
+      font-size: 1rem;
+    }
+
+    .qty-btn:hover { color: white; background: var(--primary); border-radius: 5px; }
+
+    .remove-btn {
+      background: rgba(239, 68, 68, 0.2);
+      border: 1px solid rgba(239, 68, 68, 0.5);
+      color: var(--danger);
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.85rem;
+      transition: all 0.2s;
+      font-weight: 600;
+    }
+
+    .remove-btn:hover { background: var(--danger); color: white; border-color: var(--danger); }
+
+    /* TABS */
+    .tabs {
+      display: flex;
+      gap: 0;
+      margin-bottom: 2rem;
+      border-bottom: 1px solid var(--dark3);
+    }
+
+    .tab-btn {
+      background: transparent;
+      border: none;
+      color: var(--light3);
+      padding: 1rem 1.5rem;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.2s;
+      border-bottom: 2px solid transparent;
+    }
+
+    .tab-btn.active { color: var(--primary); border-bottom-color: var(--primary); }
+    .tab-btn:hover { color: var(--light); }
+
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+
+    .profile-info-box {
+      background: var(--dark);
+      padding: 1.5rem;
+      border-radius: 10px;
+      margin-bottom: 1.5rem;
+    }
+
+    .profile-name { font-size: 1.3rem; font-weight: 700; color: var(--light); margin-bottom: 0.5rem; }
+    .profile-email { color: var(--light3); }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 1rem;
+      margin-top: 1.5rem;
+    }
+
+    .stat-box { background: var(--dark); padding: 1rem; border-radius: 10px; text-align: center; }
+    .stat-value { font-size: 1.8rem; font-weight: 700; color: var(--primary); margin-bottom: 0.5rem; }
+    .stat-label { color: var(--light3); font-size: 0.9rem; }
+
+    .error-msg {
+      background: rgba(239, 68, 68, 0.1);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      color: #fca5a5;
+      padding: 0.75rem 1rem;
+      border-radius: 8px;
+      margin-bottom: 1rem;
+      display: none;
+    }
+
+    .error-msg.active { display: block; }
+
+    /* TOAST */
+    .toast {
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      background: var(--success);
+      color: white;
+      padding: 1rem 1.5rem;
+      border-radius: 10px;
+      font-weight: 600;
+      z-index: 9999;
+      transform: translateY(100px);
+      opacity: 0;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+    }
+
+    .toast.show { transform: translateY(0); opacity: 1; }
+
+    /* EMPTY STATE */
+    .empty-state {
+      text-align: center;
+      padding: 3rem;
+      color: var(--light3);
+    }
+
+    .empty-state i { font-size: 3rem; opacity: 0.4; display: block; margin-bottom: 1rem; }
+
+    /* ORDER ITEM */
+    .order-item {
+      background: var(--dark);
+      padding: 1rem;
+      border-radius: 10px;
+      margin-bottom: 1rem;
+      border-left: 3px solid var(--primary);
+    }
+
+    .order-item-header {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 0.5rem;
+      font-weight: 600;
+      color: var(--light);
+    }
+
+    .order-item-detail { color: var(--light3); font-size: 0.9rem; }
+
+    /* RESPONSIVE */
+    @media (max-width: 768px) {
+      .nav-links { display: none; }
+      .menu-toggle { display: block; }
+      .hero h1 { font-size: 1.8rem; }
+      .hero p { font-size: 1rem; }
+      .products-grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 1rem; }
+      .filters-container { grid-template-columns: repeat(2, 1fr); }
+      .modal { width: 95%; max-width: none; }
+      .products-header { flex-direction: column; align-items: flex-start; }
+      .sort-select { width: 100%; }
+      .footer-bottom { flex-direction: column; align-items: flex-start; }
+      .section-title { font-size: 1.8rem; }
+      .nav-container { padding: 0 1rem; gap: 1rem; }
+    }
+  </style>
 </head>
 
 <body>
   <!-- NAVBAR -->
   <nav>
     <div class="nav-container">
-      <div class="logo" onclick="scrollToHome()">
+      <a class="logo" href="#home" onclick="scrollToHome()">
         <i class="fas fa-mobile-alt"></i>
         <span>MobileShop Pro</span>
-      </div>
+      </a>
 
       <div class="nav-links">
-        <a href="#" class="nav-link" onclick="scrollToHome(); return false;">Accueil</a>
+        <a href="#home" class="nav-link" onclick="scrollToHome()">Accueil</a>
         <a href="#products" class="nav-link">Produits</a>
         <a href="#about" class="nav-link">À propos</a>
         <a href="#contact" class="nav-link">Contact</a>
       </div>
 
       <div class="nav-actions">
-        <button class="btn-header" onclick="openCartModal()">
+        <button class="btn-header" onclick="openCartModal()" title="Panier">
           <i class="fas fa-shopping-cart"></i>
           <span class="count-badge" id="cartCount">0</span>
         </button>
-        <button class="btn-header" onclick="openProfileModal()">
+        <button class="btn-header" onclick="openProfileModal()" title="Profil">
           <i class="fas fa-user"></i>
-          <span id="userDisplay">Connexion</span>
+        </button>
+        <button class="btn-header" id="themeBtn" onclick="toggleTheme()" title="Thème">
+          <i class="fas fa-moon"></i>
         </button>
         <button class="menu-toggle" onclick="toggleMobileMenu()">
           <i class="fas fa-bars"></i>
         </button>
       </div>
     </div>
+    <!-- MOBILE NAV -->
+    <div class="mobile-nav" id="mobileNav">
+      <a href="#home" class="nav-link" onclick="closeMobileMenu()">Accueil</a>
+      <a href="#products" class="nav-link" onclick="closeMobileMenu()">Produits</a>
+      <a href="#about" class="nav-link" onclick="closeMobileMenu()">À propos</a>
+      <a href="#contact" class="nav-link" onclick="closeMobileMenu()">Contact</a>
+    </div>
   </nav>
 
   <!-- MAIN -->
-  <main class="main-content">
+  <main>
     <!-- HERO -->
     <section class="hero" id="home">
       <h1>Bienvenue chez MobileShop Pro</h1>
@@ -64,7 +945,7 @@
     <section class="search-section" id="products">
       <div class="search-bar">
         <i class="fas fa-search search-icon"></i>
-        <input type="text" class="search-input" id="searchInput" placeholder="Cherchez un téléphone..." onkeyup="filterProducts()">
+        <input type="text" class="search-input" id="searchInput" placeholder="Cherchez un téléphone..." oninput="filterProducts()">
       </div>
 
       <div class="filters-container">
@@ -91,11 +972,11 @@
         </div>
 
         <div class="filter-group">
-          <div class="filter-title"><i class="fas fa-tag"></i> Prix</div>
+          <div class="filter-title"><i class="fas fa-tag"></i> Prix (FCFA)</div>
           <div class="price-inputs">
-            <input type="number" id="priceMin" placeholder="Min" onchange="filterProducts()">
-            <span style="color: #94a3b8;">-</span>
-            <input type="number" id="priceMax" placeholder="Max" onchange="filterProducts()">
+            <input type="number" id="priceMin" placeholder="Min" oninput="filterProducts()">
+            <span>–</span>
+            <input type="number" id="priceMax" placeholder="Max" oninput="filterProducts()">
           </div>
         </div>
 
@@ -117,7 +998,7 @@
           </div>
         </div>
 
-        <div class="filter-group">
+        <div class="filter-group" style="justify-content: flex-end;">
           <button class="reset-btn" onclick="resetFilters()">
             <i class="fas fa-redo"></i> Réinitialiser
           </button>
@@ -125,45 +1006,42 @@
       </div>
     </section>
 
-    <!-- PRODUCTS -->
+    <!-- PRODUCTS GRID -->
     <section class="products-section">
       <div class="products-header">
-        <div class="results-count">
-          <span id="resultsCount">12</span> produit(s)
-        </div>
+        <div class="results-count"><span id="resultsCount">0</span> produit(s)</div>
         <select class="sort-select" id="sortSelect" onchange="sortProducts()">
           <option value="">Trier par</option>
           <option value="price-asc">Prix: Croissant</option>
           <option value="price-desc">Prix: Décroissant</option>
-          <option value="name-asc">Nom: A-Z</option>
-          <option value="name-desc">Nom: Z-A</option>
+          <option value="name-asc">Nom: A–Z</option>
+          <option value="name-desc">Nom: Z–A</option>
         </select>
       </div>
-
       <div class="products-grid" id="productsGrid"></div>
     </section>
 
-    <!-- ABOUT SECTION -->
-    <section id="about" style="max-width: 1200px; margin: 4rem auto; padding: 0 2rem;">
-      <h2 style="font-size: 2rem; margin-bottom: 1rem; background: var(--gradient-primary); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">À propos de nous</h2>
-      <p style="color: #cbd5e1; line-height: 1.8; margin-bottom: 1.5rem;">
+    <!-- ABOUT -->
+    <section id="about" class="about-section">
+      <h2 class="section-title">À propos de nous</h2>
+      <p style="color: var(--light2); line-height: 1.8; margin-bottom: 2rem; text-align: center;">
         MobileShop Pro est votre destination de confiance pour les smartphones premium au Sénégal. Depuis des années, nous nous engageons à offrir les meilleurs appareils avec un service client exceptionnel.
       </p>
-      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 2rem;">
-        <div style="background: rgba(102, 126, 234, 0.1); padding: 2rem; border-radius: 15px; text-align: center;">
-          <i class="fas fa-truck" style="font-size: 2.5rem; color: var(--primary); margin-bottom: 1rem;"></i>
+      <div class="about-grid">
+        <div class="about-card">
+          <i class="fas fa-truck"></i>
           <h3>Livraison rapide</h3>
-          <p style="color: #94a3b8; margin-top: 0.5rem;">Livraison gratuite à partir de 100,000 FCFA</p>
+          <p>Livraison gratuite à partir de 100 000 FCFA</p>
         </div>
-        <div style="background: rgba(102, 126, 234, 0.1); padding: 2rem; border-radius: 15px; text-align: center;">
-          <i class="fas fa-shield-alt" style="font-size: 2.5rem; color: var(--primary); margin-bottom: 1rem;"></i>
+        <div class="about-card">
+          <i class="fas fa-shield-alt"></i>
           <h3>100% Sécurisé</h3>
-          <p style="color: #94a3b8; margin-top: 0.5rem;">Vos données sont protégées et confidentielles</p>
+          <p>Vos données sont protégées et confidentielles</p>
         </div>
-        <div style="background: rgba(102, 126, 234, 0.1); padding: 2rem; border-radius: 15px; text-align: center;">
-          <i class="fas fa-headset" style="font-size: 2.5rem; color: var(--primary); margin-bottom: 1rem;"></i>
+        <div class="about-card">
+          <i class="fas fa-headset"></i>
           <h3>Support 24/7</h3>
-          <p style="color: #94a3b8; margin-top: 0.5rem;">Notre équipe est là pour vous aider</p>
+          <p>Notre équipe est disponible pour vous aider</p>
         </div>
       </div>
     </section>
@@ -174,10 +1052,8 @@
     <div class="footer-container">
       <div class="footer-content">
         <div class="footer-section">
-          <div class="footer-logo">
-            <i class="fas fa-mobile-alt"></i> MobileShop Pro
-          </div>
-          <p class="footer-desc">La meilleure boutique de smartphones premium au Sénégal avec un service client exceptionnel.</p>
+          <div class="footer-logo"><i class="fas fa-mobile-alt"></i> MobileShop Pro</div>
+          <p class="footer-desc">La meilleure boutique de smartphones premium au Sénégal avec un service de qualité.</p>
           <div class="social-links">
             <a href="#" class="social-link" title="Facebook"><i class="fab fa-facebook-f"></i></a>
             <a href="#" class="social-link" title="Instagram"><i class="fab fa-instagram"></i></a>
@@ -185,7 +1061,6 @@
             <a href="#" class="social-link" title="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
           </div>
         </div>
-
         <div class="footer-section">
           <h3>Produits</h3>
           <ul>
@@ -195,7 +1070,6 @@
             <li><a href="#products"><i class="fas fa-list"></i> Tous les produits</a></li>
           </ul>
         </div>
-
         <div class="footer-section">
           <h3>Support</h3>
           <ul>
@@ -205,26 +1079,13 @@
             <li><a href="#"><i class="fas fa-undo"></i> Retours</a></li>
           </ul>
         </div>
-
         <div class="footer-section">
           <h3>Nous contacter</h3>
           <div class="footer-contact">
-            <div class="contact-item">
-              <i class="fas fa-phone"></i>
-              <span>+221 77 123 45 67</span>
-            </div>
-            <div class="contact-item">
-              <i class="fas fa-envelope"></i>
-              <span>contact@mobileshop.sn</span>
-            </div>
-            <div class="contact-item">
-              <i class="fas fa-map-marker-alt"></i>
-              <span>Dakar, Sénégal</span>
-            </div>
-            <div class="contact-item">
-              <i class="fab fa-whatsapp"></i>
-              <span>WhatsApp: +221 77 123 45 67</span>
-            </div>
+            <div class="contact-item"><i class="fas fa-phone"></i><span>+221 77 123 45 67</span></div>
+            <div class="contact-item"><i class="fas fa-envelope"></i><span>contact@mobileshop.sn</span></div>
+            <div class="contact-item"><i class="fas fa-map-marker-alt"></i><span>Dakar, Sénégal</span></div>
+            <div class="contact-item"><i class="fab fa-whatsapp"></i><span>+221 77 123 45 67</span></div>
           </div>
         </div>
       </div>
@@ -234,44 +1095,35 @@
       <div class="footer-bottom">
         <p class="copyright">&copy; 2026 MobileShop Pro. Tous droits réservés.</p>
         <div class="footer-links">
-          <a href="#" class="footer-link">À propos</a>
-          <a href="#" class="footer-link">Contact</a>
+          <a href="#about" class="footer-link">À propos</a>
+          <a href="#contact" class="footer-link">Contact</a>
           <a href="#" class="footer-link">Conditions</a>
           <a href="#" class="footer-link">Confidentialité</a>
         </div>
       </div>
     </div>
+
+    <!-- REVIEWS -->
     <section class="reviews-section">
-  <h2 class="section-title">Avis de nos clients</h2>
-
-  <div class="reviews-container">
-
-    <div class="review-card">
-      <div class="review-stars">★★★★★</div>
-      <p class="review-text">
-        Excellent service ! Livraison rapide à Dakar et téléphone en parfait état.
-      </p>
-      <div class="review-user">— Mamadou D.</div>
-    </div>
-
-    <div class="review-card">
-      <div class="review-stars">★★★★★</div>
-      <p class="review-text">
-        Très satisfait de mon iPhone. Prix correct et équipe professionnelle.
-      </p>
-      <div class="review-user">— Awa S.</div>
-    </div>
-
-    <div class="review-card">
-      <div class="review-stars">★★★★☆</div>
-      <p class="review-text">
-        Bon service client. Je recommande MobileShop Pro.
-      </p>
-      <div class="review-user">— Cheikh T.</div>
-    </div>
-
-  </div>
-</section>
+      <h2 class="section-title">Avis de nos clients</h2>
+      <div class="reviews-container">
+        <div class="review-card">
+          <div class="review-stars">★★★★★</div>
+          <p class="review-text">Excellent service ! Livraison rapide à Dakar et téléphone en parfait état.</p>
+          <div class="review-user">— Mamadou D.</div>
+        </div>
+        <div class="review-card">
+          <div class="review-stars">★★★★★</div>
+          <p class="review-text">Très satisfait de mon iPhone. Prix correct et équipe professionnelle.</p>
+          <div class="review-user">— Awa S.</div>
+        </div>
+        <div class="review-card">
+          <div class="review-stars">★★★★☆</div>
+          <p class="review-text">Bon service client. Je recommande MobileShop Pro sans hésitation.</p>
+          <div class="review-user">— Cheikh T.</div>
+        </div>
+      </div>
+    </section>
   </footer>
 
   <!-- OVERLAY -->
@@ -280,49 +1132,34 @@
   <!-- CART MODAL -->
   <div class="modal" id="cartModal">
     <div class="modal-header">
-      <h3 class="modal-title">Mon Panier</h3>
+      <h3 class="modal-title"><i class="fas fa-shopping-cart"></i> Mon Panier</h3>
       <button class="close-btn" onclick="closeCartModal()"><i class="fas fa-times"></i></button>
     </div>
-
     <div class="modal-content">
-      <div id="cartEmptyMsg" style="text-align: center; color: #94a3b8;">
-        <i class="fas fa-shopping-cart" style="font-size: 3rem; opacity: 0.5; display: block; margin-bottom: 1rem;"></i>
-        Panier vide
+      <div id="cartEmptyMsg" class="empty-state">
+        <i class="fas fa-shopping-cart"></i>
+        Votre panier est vide
       </div>
       <div id="cartItemsList"></div>
     </div>
-
     <div class="modal-footer">
       <div class="cart-summary">
-        <div class="summary-row">
-          <span>Sous-total:</span>
-          <span id="subtotal">0 FCFA</span>
-        </div>
-        <div class="summary-row">
-          <span>Frais de livraison:</span>
-          <span id="shipping">0 FCFA</span>
-        </div>
-        <div class="summary-row summary-total">
-          <span>Total:</span>
-          <span id="totalPrice">0 FCFA</span>
-        </div>
+        <div class="summary-row"><span>Sous-total:</span><span id="subtotal">0 FCFA</span></div>
+        <div class="summary-row"><span>Frais de livraison:</span><span id="shipping">0 FCFA</span></div>
+        <div class="summary-row summary-total"><span>Total:</span><span id="totalPrice">0 FCFA</span></div>
       </div>
-
       <div class="form-group">
         <label class="form-label">Nom complet</label>
-        <input type="text" class="form-input" id="customerName" placeholder="Votre nom">
+        <input type="text" class="form-input" id="customerName" placeholder="Votre nom complet">
       </div>
-
       <div class="form-group">
         <label class="form-label">Téléphone</label>
         <input type="tel" class="form-input" id="customerPhone" placeholder="77 123 45 67">
       </div>
-
       <div class="form-group">
-        <label class="form-label">Adresse</label>
+        <label class="form-label">Adresse de livraison</label>
         <input type="text" class="form-input" id="customerAddress" placeholder="Votre adresse">
       </div>
-
       <button class="btn btn-secondary" onclick="placeOrder()">
         <i class="fab fa-whatsapp"></i> Commander via WhatsApp
       </button>
@@ -332,59 +1169,56 @@
   <!-- PROFILE MODAL -->
   <div class="modal" id="profileModal">
     <div class="modal-header">
-      <h3 class="modal-title">Mon Profil</h3>
+      <h3 class="modal-title"><i class="fas fa-user"></i> Mon Profil</h3>
       <button class="close-btn" onclick="closeProfileModal()"><i class="fas fa-times"></i></button>
     </div>
-
     <div class="modal-content">
-      <!-- AUTH CONTENT -->
+      <!-- AUTH -->
       <div id="authContent">
         <div class="error-msg" id="authError"></div>
 
-        <!-- LOGIN FORM -->
         <form id="loginForm" onsubmit="handleLogin(event)">
-          <h3 style="margin-bottom: 1.5rem;">Connexion</h3>
+          <h3 style="margin-bottom: 1.5rem; color: var(--light);">Connexion</h3>
           <div class="form-group">
             <label class="form-label">Email</label>
-            <input type="email" class="form-input" id="loginEmail" required>
+            <input type="email" class="form-input" id="loginEmail" placeholder="email@exemple.com" required>
           </div>
           <div class="form-group">
             <label class="form-label">Mot de passe</label>
-            <input type="password" class="form-input" id="loginPassword" required>
+            <input type="password" class="form-input" id="loginPassword" placeholder="••••••••" required>
           </div>
-          <button type="submit" class="btn btn-primary">Connexion</button>
-          <div style="text-align: center; margin-top: 1rem; color: #cbd5e1;">
-            Pas encore de compte ? <a href="#" onclick="switchToRegister(event)" style="color: var(--primary); font-weight: 600; cursor: pointer;">S'inscrire</a>
+          <button type="submit" class="btn btn-primary"><i class="fas fa-sign-in-alt"></i> Connexion</button>
+          <div style="text-align: center; margin-top: 1rem; color: var(--light3);">
+            Pas encore de compte ? <a href="#" onclick="switchToRegister(event)" style="color: var(--primary); font-weight: 600;">S'inscrire</a>
           </div>
         </form>
 
-        <!-- REGISTER FORM -->
         <form id="registerForm" style="display: none;" onsubmit="handleRegister(event)">
-          <h3 style="margin-bottom: 1.5rem;">Créer un compte</h3>
+          <h3 style="margin-bottom: 1.5rem; color: var(--light);">Créer un compte</h3>
           <div class="form-group">
             <label class="form-label">Nom complet</label>
-            <input type="text" class="form-input" id="registerName" required>
+            <input type="text" class="form-input" id="registerName" placeholder="Prénom et nom" required>
           </div>
           <div class="form-group">
             <label class="form-label">Email</label>
-            <input type="email" class="form-input" id="registerEmail" required>
+            <input type="email" class="form-input" id="registerEmail" placeholder="email@exemple.com" required>
           </div>
           <div class="form-group">
             <label class="form-label">Téléphone</label>
-            <input type="tel" class="form-input" id="registerPhone" required>
+            <input type="tel" class="form-input" id="registerPhone" placeholder="77 123 45 67" required>
           </div>
           <div class="form-group">
             <label class="form-label">Mot de passe</label>
-            <input type="password" class="form-input" id="registerPassword" required>
+            <input type="password" class="form-input" id="registerPassword" placeholder="Min. 6 caractères" required>
           </div>
-          <button type="submit" class="btn btn-primary">Créer un compte</button>
-          <div style="text-align: center; margin-top: 1rem; color: #cbd5e1;">
-            Vous avez un compte ? <a href="#" onclick="switchToLogin(event)" style="color: var(--primary); font-weight: 600; cursor: pointer;">Connexion</a>
+          <button type="submit" class="btn btn-primary"><i class="fas fa-user-plus"></i> Créer un compte</button>
+          <div style="text-align: center; margin-top: 1rem; color: var(--light3);">
+            Vous avez un compte ? <a href="#" onclick="switchToLogin(event)" style="color: var(--primary); font-weight: 600;">Connexion</a>
           </div>
         </form>
       </div>
 
-      <!-- PROFILE CONTENT -->
+      <!-- PROFILE LOGGED IN -->
       <div id="profileContent" style="display: none;">
         <div class="tabs">
           <button class="tab-btn active" onclick="switchTab(event, 'dashboard')">Dashboard</button>
@@ -403,21 +1237,21 @@
               <div class="stat-label">Commandes</div>
             </div>
             <div class="stat-box">
-              <div class="stat-value" id="totalAmount">0 FCFA</div>
-              <div class="stat-label">Total dépensé</div>
+              <div class="stat-value" id="totalAmount">0</div>
+              <div class="stat-label">Total dépensé (FCFA)</div>
             </div>
           </div>
         </div>
 
         <div id="orders" class="tab-content">
-          <h3 style="margin-bottom: 1rem;">Historique des commandes</h3>
+          <h3 style="margin-bottom: 1rem; color: var(--light);">Historique des commandes</h3>
           <div id="ordersList">
-            <p style="color: #94a3b8; text-align: center;">Aucune commande</p>
+            <p style="color: var(--light3); text-align: center;">Aucune commande pour l'instant.</p>
           </div>
         </div>
 
         <div id="settings" class="tab-content">
-          <h3 style="margin-bottom: 1.5rem;">Paramètres du compte</h3>
+          <h3 style="margin-bottom: 1.5rem; color: var(--light);">Paramètres du compte</h3>
           <div class="form-group">
             <label class="form-label">Nom complet</label>
             <input type="text" class="form-input" id="settingsName">
@@ -430,13 +1264,473 @@
             <label class="form-label">Téléphone</label>
             <input type="tel" class="form-input" id="settingsPhone">
           </div>
-          <button class="btn btn-primary" onclick="updateProfile()">Mettre à jour</button>
-          <button class="btn btn-secondary" onclick="logout()">Déconnexion</button>
+          <button class="btn btn-primary" onclick="saveSettings()" style="margin-bottom: 1rem;">
+            <i class="fas fa-save"></i> Sauvegarder
+          </button>
+          <button class="btn" onclick="handleLogout()" style="background: rgba(239,68,68,0.2); color: var(--danger); border: 1px solid rgba(239,68,68,0.5);">
+            <i class="fas fa-sign-out-alt"></i> Déconnexion
+          </button>
         </div>
       </div>
     </div>
   </div>
 
-  <script src="script.js"></script>
+  <!-- TOAST -->
+  <div class="toast" id="toast">
+    <i class="fas fa-check-circle"></i>
+    <span id="toastMsg">Message</span>
+  </div>
+
+  <!-- ===================== JAVASCRIPT ===================== -->
+  <script>
+    // ─── DATA ───────────────────────────────────────────────────────────────────
+    const PRODUCTS = [
+      { id: 1,  brand: 'Apple',   name: 'iPhone 15 Pro Max', specs: '256 Go · Titanium · 48 Mpx',       price: 850000,  type: 'flagship', icon: '📱' },
+      { id: 2,  brand: 'Apple',   name: 'iPhone 15',          specs: '128 Go · Rose · 48 Mpx',          price: 580000,  type: 'flagship', icon: '📱' },
+      { id: 3,  brand: 'Apple',   name: 'iPhone 14',          specs: '128 Go · Minuit · 12 Mpx',        price: 460000,  type: 'flagship', icon: '📱' },
+      { id: 4,  brand: 'Samsung', name: 'Galaxy S24 Ultra',   specs: '256 Go · Titanium · 200 Mpx',     price: 900000,  type: 'flagship', icon: '📱' },
+      { id: 5,  brand: 'Samsung', name: 'Galaxy S24',         specs: '128 Go · Violet · 50 Mpx',       price: 550000,  type: 'flagship', icon: '📱' },
+      { id: 6,  brand: 'Samsung', name: 'Galaxy A55',         specs: '128 Go · Bleu · 50 Mpx',         price: 250000,  type: 'mid',      icon: '📱' },
+      { id: 7,  brand: 'Samsung', name: 'Galaxy A35',         specs: '128 Go · Bleu · 50 Mpx',         price: 180000,  type: 'mid',      icon: '📱' },
+      { id: 8,  brand: 'Xiaomi',  name: 'Redmi Note 13 Pro',  specs: '256 Go · Noir · 200 Mpx',        price: 200000,  type: 'mid',      icon: '📱' },
+      { id: 9,  brand: 'Xiaomi',  name: 'Xiaomi 14',          specs: '512 Go · Noir · Leica 50 Mpx',   price: 700000,  type: 'flagship', icon: '📱' },
+      { id: 10, brand: 'Xiaomi',  name: 'Redmi 13C',          specs: '128 Go · Bleu Glacier · 50 Mpx', price: 90000,   type: 'budget',   icon: '📱' },
+      { id: 11, brand: 'Oppo',    name: 'Reno 11 Pro',        specs: '256 Go · Bleu · 50 Mpx',         price: 320000,  type: 'mid',      icon: '📱' },
+      { id: 12, brand: 'Oppo',    name: 'Find X7 Ultra',      specs: '512 Go · Noir · Hasselblad',     price: 950000,  type: 'flagship', icon: '📱' },
+    ];
+
+    // ─── STATE ──────────────────────────────────────────────────────────────────
+    let cart         = JSON.parse(localStorage.getItem('msp_cart'))    || [];
+    let users        = JSON.parse(localStorage.getItem('msp_users'))   || [];
+    let currentUser  = JSON.parse(localStorage.getItem('msp_current')) || null;
+    let orders       = JSON.parse(localStorage.getItem('msp_orders'))  || [];
+    let filteredList = [...PRODUCTS];
+
+    // ─── HELPERS ────────────────────────────────────────────────────────────────
+    function saveCart()    { localStorage.setItem('msp_cart',    JSON.stringify(cart)); }
+    function saveUsers()   { localStorage.setItem('msp_users',   JSON.stringify(users)); }
+    function saveSession() { localStorage.setItem('msp_current', JSON.stringify(currentUser)); }
+    function saveOrders()  { localStorage.setItem('msp_orders',  JSON.stringify(orders)); }
+
+    function formatPrice(p) {
+      return p.toLocaleString('fr-FR') + ' FCFA';
+    }
+
+    function showToast(msg, isError = false) {
+      const t = document.getElementById('toast');
+      const icon = t.querySelector('i');
+      document.getElementById('toastMsg').textContent = msg;
+      t.style.background = isError ? 'var(--danger)' : 'var(--success)';
+      icon.className = isError ? 'fas fa-times-circle' : 'fas fa-check-circle';
+      t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 3000);
+    }
+
+    // ─── THEME ──────────────────────────────────────────────────────────────────
+    function toggleTheme() {
+      document.body.classList.toggle('light-theme');
+      const btn = document.getElementById('themeBtn').querySelector('i');
+      btn.className = document.body.classList.contains('light-theme') ? 'fas fa-sun' : 'fas fa-moon';
+      localStorage.setItem('msp_theme', document.body.classList.contains('light-theme') ? 'light' : 'dark');
+    }
+
+    (function initTheme() {
+      if (localStorage.getItem('msp_theme') === 'light') {
+        document.body.classList.add('light-theme');
+        const btn = document.getElementById('themeBtn');
+        if (btn) btn.querySelector('i').className = 'fas fa-sun';
+      }
+    })();
+
+    // ─── MOBILE MENU ────────────────────────────────────────────────────────────
+    function toggleMobileMenu() {
+      document.getElementById('mobileNav').classList.toggle('open');
+    }
+
+    function closeMobileMenu() {
+      document.getElementById('mobileNav').classList.remove('open');
+    }
+
+    // ─── SCROLL ─────────────────────────────────────────────────────────────────
+    function scrollToHome() {
+      document.getElementById('home').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    // ─── PRODUCTS ───────────────────────────────────────────────────────────────
+    function renderProducts(list) {
+      const grid = document.getElementById('productsGrid');
+      document.getElementById('resultsCount').textContent = list.length;
+
+      if (list.length === 0) {
+        grid.innerHTML = `
+          <div class="empty-state" style="grid-column:1/-1">
+            <i class="fas fa-search"></i>
+            <p>Aucun produit ne correspond à votre recherche.</p>
+          </div>`;
+        return;
+      }
+
+      grid.innerHTML = list.map(p => `
+        <div class="product-card">
+          <div class="product-image">${p.icon}</div>
+          <div class="product-body">
+            <div class="product-brand">${p.brand}</div>
+            <div class="product-name">${p.name}</div>
+            <div class="product-specs">${p.specs}</div>
+            <div class="product-price">${formatPrice(p.price)}</div>
+            <button class="add-to-cart-btn" onclick="addToCart(${p.id})">
+              <i class="fas fa-cart-plus"></i> Ajouter
+            </button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function filterProducts() {
+      const q       = document.getElementById('searchInput').value.toLowerCase();
+      const brands  = [...document.querySelectorAll('[id^="brand-"]:checked')].map(c => c.value);
+      const types   = [...document.querySelectorAll('[id^="type-"]:checked')].map(c => c.value);
+      const minP    = parseFloat(document.getElementById('priceMin').value) || 0;
+      const maxP    = parseFloat(document.getElementById('priceMax').value) || Infinity;
+
+      filteredList = PRODUCTS.filter(p => {
+        const matchQ     = p.name.toLowerCase().includes(q) || p.brand.toLowerCase().includes(q);
+        const matchBrand = brands.length === 0 || brands.includes(p.brand.toLowerCase());
+        const matchType  = types.length === 0  || types.includes(p.type);
+        const matchPrice = p.price >= minP && p.price <= maxP;
+        return matchQ && matchBrand && matchType && matchPrice;
+      });
+
+      sortProducts();
+    }
+
+    function sortProducts() {
+      const val = document.getElementById('sortSelect').value;
+      const list = [...filteredList];
+      if (val === 'price-asc')  list.sort((a, b) => a.price - b.price);
+      if (val === 'price-desc') list.sort((a, b) => b.price - a.price);
+      if (val === 'name-asc')   list.sort((a, b) => a.name.localeCompare(b.name));
+      if (val === 'name-desc')  list.sort((a, b) => b.name.localeCompare(a.name));
+      renderProducts(list);
+    }
+
+    function resetFilters() {
+      document.getElementById('searchInput').value = '';
+      document.getElementById('priceMin').value    = '';
+      document.getElementById('priceMax').value    = '';
+      document.getElementById('sortSelect').value  = '';
+      document.querySelectorAll('input[type="checkbox"]').forEach(c => c.checked = false);
+      filteredList = [...PRODUCTS];
+      renderProducts(filteredList);
+    }
+
+    // ─── CART ───────────────────────────────────────────────────────────────────
+    function addToCart(id) {
+      const product = PRODUCTS.find(p => p.id === id);
+      const existing = cart.find(c => c.id === id);
+      if (existing) {
+        existing.qty++;
+      } else {
+        cart.push({ ...product, qty: 1 });
+      }
+      saveCart();
+      updateCartCount();
+      showToast(`${product.name} ajouté au panier !`);
+    }
+
+    function removeFromCart(id) {
+      cart = cart.filter(c => c.id !== id);
+      saveCart();
+      updateCartCount();
+      renderCart();
+    }
+
+    function changeQty(id, delta) {
+      const item = cart.find(c => c.id === id);
+      if (!item) return;
+      item.qty += delta;
+      if (item.qty <= 0) { removeFromCart(id); return; }
+      saveCart();
+      renderCart();
+    }
+
+    function updateCartCount() {
+      const total = cart.reduce((s, c) => s + c.qty, 0);
+      document.getElementById('cartCount').textContent = total;
+    }
+
+    function renderCart() {
+      const list    = document.getElementById('cartItemsList');
+      const emptyEl = document.getElementById('cartEmptyMsg');
+
+      if (cart.length === 0) {
+        emptyEl.style.display = 'block';
+        list.innerHTML = '';
+        updateSummary(0);
+        return;
+      }
+
+      emptyEl.style.display = 'none';
+      list.innerHTML = cart.map(item => `
+        <div class="cart-item">
+          <div class="cart-item-info">
+            <div class="cart-item-name">${item.brand} ${item.name}</div>
+            <div class="cart-item-price">${formatPrice(item.price)} × ${item.qty} = ${formatPrice(item.price * item.qty)}</div>
+          </div>
+          <div class="cart-item-qty">
+            <button class="qty-btn" onclick="changeQty(${item.id}, -1)">−</button>
+            <span style="min-width:20px; text-align:center; color:var(--light); font-weight:600;">${item.qty}</span>
+            <button class="qty-btn" onclick="changeQty(${item.id}, 1)">+</button>
+          </div>
+          <button class="remove-btn" onclick="removeFromCart(${item.id})"><i class="fas fa-trash"></i></button>
+        </div>
+      `).join('');
+
+      const subtotal = cart.reduce((s, c) => s + c.price * c.qty, 0);
+      updateSummary(subtotal);
+    }
+
+    function updateSummary(subtotal) {
+      const shipping = subtotal >= 100000 ? 0 : (subtotal > 0 ? 2500 : 0);
+      document.getElementById('subtotal').textContent  = formatPrice(subtotal);
+      document.getElementById('shipping').textContent  = shipping === 0 && subtotal > 0 ? 'Gratuit' : formatPrice(shipping);
+      document.getElementById('totalPrice').textContent = formatPrice(subtotal + shipping);
+    }
+
+    function placeOrder() {
+      if (cart.length === 0) { showToast('Votre panier est vide !', true); return; }
+
+      const name    = document.getElementById('customerName').value.trim();
+      const phone   = document.getElementById('customerPhone').value.trim();
+      const address = document.getElementById('customerAddress').value.trim();
+
+      if (!name || !phone || !address) {
+        showToast('Veuillez remplir tous les champs de livraison.', true);
+        return;
+      }
+
+      const subtotal = cart.reduce((s, c) => s + c.price * c.qty, 0);
+      const shipping = subtotal >= 100000 ? 0 : 2500;
+      const total    = subtotal + shipping;
+
+      const lines = cart.map(c => `- ${c.brand} ${c.name} x${c.qty}: ${formatPrice(c.price * c.qty)}`).join('\n');
+      const msg = encodeURIComponent(
+        `🛒 *Nouvelle commande - MobileShop Pro*\n\n` +
+        `👤 Nom: ${name}\n📞 Tél: ${phone}\n📍 Adresse: ${address}\n\n` +
+        `*Produits:*\n${lines}\n\n` +
+        `💰 Sous-total: ${formatPrice(subtotal)}\n` +
+        `🚚 Livraison: ${shipping === 0 ? 'Gratuite' : formatPrice(shipping)}\n` +
+        `✅ *TOTAL: ${formatPrice(total)}*`
+      );
+
+      // Save order if user logged in
+      if (currentUser) {
+        const order = {
+          id: Date.now(),
+          userId: currentUser.email,
+          date: new Date().toLocaleDateString('fr-FR'),
+          items: [...cart],
+          total,
+          name, phone, address
+        };
+        orders.push(order);
+        saveOrders();
+      }
+
+      cart = [];
+      saveCart();
+      updateCartCount();
+      renderCart();
+      closeAllModals();
+      showToast('Commande envoyée ! Redirection WhatsApp...');
+
+      setTimeout(() => {
+        window.open(`https://wa.me/221771234567?text=${msg}`, '_blank');
+      }, 1000);
+    }
+
+    // ─── AUTH ───────────────────────────────────────────────────────────────────
+    function handleLogin(e) {
+      e.preventDefault();
+      const email    = document.getElementById('loginEmail').value.trim();
+      const password = document.getElementById('loginPassword').value;
+      const user     = users.find(u => u.email === email && u.password === password);
+
+      if (!user) {
+        showAuthError('Email ou mot de passe incorrect.');
+        return;
+      }
+
+      currentUser = user;
+      saveSession();
+      showProfile();
+      showToast(`Bienvenue, ${user.name} !`);
+    }
+
+    function handleRegister(e) {
+      e.preventDefault();
+      const name     = document.getElementById('registerName').value.trim();
+      const email    = document.getElementById('registerEmail').value.trim();
+      const phone    = document.getElementById('registerPhone').value.trim();
+      const password = document.getElementById('registerPassword').value;
+
+      if (users.find(u => u.email === email)) {
+        showAuthError('Cet email est déjà utilisé.');
+        return;
+      }
+
+      if (password.length < 6) {
+        showAuthError('Le mot de passe doit faire au moins 6 caractères.');
+        return;
+      }
+
+      const user = { name, email, phone, password };
+      users.push(user);
+      saveUsers();
+      currentUser = user;
+      saveSession();
+      showProfile();
+      showToast(`Compte créé ! Bienvenue, ${name} !`);
+    }
+
+    function handleLogout() {
+      currentUser = null;
+      localStorage.removeItem('msp_current');
+      document.getElementById('profileContent').style.display = 'none';
+      document.getElementById('authContent').style.display    = 'block';
+      switchToLogin({ preventDefault: () => {} });
+      closeAllModals();
+      showToast('Vous êtes déconnecté(e).');
+    }
+
+    function showAuthError(msg) {
+      const el = document.getElementById('authError');
+      el.textContent = msg;
+      el.classList.add('active');
+      setTimeout(() => el.classList.remove('active'), 4000);
+    }
+
+    function showProfile() {
+      document.getElementById('authContent').style.display    = 'none';
+      document.getElementById('profileContent').style.display = 'block';
+
+      document.getElementById('profileName').textContent  = currentUser.name;
+      document.getElementById('profileEmail').textContent = currentUser.email;
+      document.getElementById('settingsName').value  = currentUser.name;
+      document.getElementById('settingsEmail').value = currentUser.email;
+      document.getElementById('settingsPhone').value = currentUser.phone || '';
+
+      const userOrders = orders.filter(o => o.userId === currentUser.email);
+      const spent      = userOrders.reduce((s, o) => s + o.total, 0);
+
+      document.getElementById('totalOrders').textContent = userOrders.length;
+      document.getElementById('totalAmount').textContent = spent.toLocaleString('fr-FR');
+
+      renderOrders(userOrders);
+    }
+
+    function renderOrders(userOrders) {
+      const el = document.getElementById('ordersList');
+      if (userOrders.length === 0) {
+        el.innerHTML = '<p style="color:var(--light3);text-align:center;">Aucune commande pour l\'instant.</p>';
+        return;
+      }
+      el.innerHTML = userOrders.slice().reverse().map(o => `
+        <div class="order-item">
+          <div class="order-item-header">
+            <span>Commande #${o.id.toString().slice(-5)}</span>
+            <span style="color:var(--primary)">${formatPrice(o.total)}</span>
+          </div>
+          <div class="order-item-detail">
+            📅 ${o.date} · ${o.items.length} article(s) · 📍 ${o.address}
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function saveSettings() {
+      if (!currentUser) return;
+      currentUser.name  = document.getElementById('settingsName').value.trim() || currentUser.name;
+      currentUser.email = document.getElementById('settingsEmail').value.trim() || currentUser.email;
+      currentUser.phone = document.getElementById('settingsPhone').value.trim();
+
+      // Update in users array
+      const idx = users.findIndex(u => u.email === currentUser.email);
+      if (idx !== -1) users[idx] = currentUser;
+      saveUsers();
+      saveSession();
+
+      document.getElementById('profileName').textContent  = currentUser.name;
+      document.getElementById('profileEmail').textContent = currentUser.email;
+      showToast('Paramètres sauvegardés !');
+    }
+
+    function switchToRegister(e) {
+      e.preventDefault();
+      document.getElementById('loginForm').style.display    = 'none';
+      document.getElementById('registerForm').style.display = 'block';
+      document.getElementById('authError').classList.remove('active');
+    }
+
+    function switchToLogin(e) {
+      e.preventDefault();
+      document.getElementById('registerForm').style.display = 'none';
+      document.getElementById('loginForm').style.display    = 'block';
+      document.getElementById('authError').classList.remove('active');
+    }
+
+    // ─── TABS ───────────────────────────────────────────────────────────────────
+    function switchTab(e, id) {
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+      e.currentTarget.classList.add('active');
+      document.getElementById(id).classList.add('active');
+    }
+
+    // ─── MODALS ─────────────────────────────────────────────────────────────────
+    function openCartModal() {
+      renderCart();
+      document.getElementById('cartModal').classList.add('active');
+      document.getElementById('overlay').classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeCartModal() {
+      document.getElementById('cartModal').classList.remove('active');
+      document.getElementById('overlay').classList.remove('active');
+      document.body.style.overflow = '';
+    }
+
+    function openProfileModal() {
+      if (currentUser) {
+        showProfile();
+      } else {
+        document.getElementById('authContent').style.display    = 'block';
+        document.getElementById('profileContent').style.display = 'none';
+      }
+      document.getElementById('profileModal').classList.add('active');
+      document.getElementById('overlay').classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeProfileModal() {
+      document.getElementById('profileModal').classList.remove('active');
+      document.getElementById('overlay').classList.remove('active');
+      document.body.style.overflow = '';
+    }
+
+    function closeAllModals() {
+      document.querySelectorAll('.modal').forEach(m => m.classList.remove('active'));
+      document.getElementById('overlay').classList.remove('active');
+      document.body.style.overflow = '';
+    }
+
+    // ─── INIT ───────────────────────────────────────────────────────────────────
+    (function init() {
+      filteredList = [...PRODUCTS];
+      renderProducts(filteredList);
+      updateCartCount();
+    })();
+  </script>
 </body>
 </html>
